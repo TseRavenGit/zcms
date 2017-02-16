@@ -1,11 +1,29 @@
 <?php
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
+// +----------------------------------------------------------------------
+
 namespace Home\Controller;
+
+/**
+ * 文档模型控制器
+ * 文档模型列表和详情
+ */
 class ArticleController extends HomeController {
+
+    /* 文档模型频道页 */
 	public function index(){
+		/* 分类信息 */
 		$category = $this->category();
+
+		//频道页只显示模板，默认不读取任何内容
+		//内容可以通过模板标签自行定制
+
+		/* 模板赋值并渲染模板 */
 		$this->assign('category', $category);
 		$this->display($category['template_index']);
 	}
@@ -14,50 +32,22 @@ class ArticleController extends HomeController {
 	public function lists($p = 1){
 		/* 分类信息 */
 		$category = $this->category();
-		//分页配置
-		$p = I('get.p')?I('get.p'):1;
 
 		/* 获取当前分类列表 */
 		$Document = D('Document');
-		$list = $Document->page($p,$category['list_row'])->lists($category['id']);
-		$map1['status'] = 1;
-		$map1['category_id'] = $category['id'];
-		$count = M('Document')->where($map1)->count();
-
-		//当下栏目是一级栏目的，获取所有子级信息
-		if(!strcmp($category['pid'], '0') !== 0 && empty($list)){
-			$map['pid'] = $category['id'];
-			$child_ids = M('category')->field('id')->where($map)->select();
-			$child = implode(',',array_column($child_ids,'id'));
-			$map2['category_id'] = array('in',$child);
-			$map2['status'] = 1;
-			$list = $Document->page($p, $category['list_row'])->where($map2)->lists();
-			$count = M('Document')->where($map2)->count();
+		$list = $Document->page($p, $category['list_row'])->lists($category['id']);
+		if(false === $list){
+			$this->error('获取列表数据失败！');
 		}
 
-		/*分页实现*/
-		$Page = new \Think\Page($count,$category['list_row']);
-		$Page->setConfig('next','下一页');
-		$Page->setConfig('prev','上一页');
-		$show = $Page->show();
-		$this->assign('_page',$show);
-
-		/* 获取模板 */
-		if(!empty($category['template_lists'])){ //分类已定制模板
-			$tmpl = $category['template_lists'];
-		} elseif($category['model']>2) { //使用默认模板
-			$tmpl = 'Article/list_'. get_model($category['model'],'name');
-		}else{
-			$tmpl = 'Article/list';
-		}
 		/* 模板赋值并渲染模板 */
 		$this->assign('category', $category);
 		$this->assign('list', $list);
-		$this->display($tmpl);
+		$this->display($category['template_lists']);
 	}
 
 	/* 文档模型详情页 */
-	public function show($id = 0, $p = 1){
+	public function detail($id = 0, $p = 1){
 		/* 标识正确性检测 */
 		if(!($id && is_numeric($id))){
 			$this->error('文档ID错误！');
@@ -69,7 +59,7 @@ class ArticleController extends HomeController {
 
 		/* 获取详细信息 */
 		$Document = D('Document');
-		$info = $Document->show($id);
+		$info = $Document->detail($id);
 		if(!$info){
 			$this->error($Document->getError());
 		}
@@ -82,11 +72,10 @@ class ArticleController extends HomeController {
 			$tmpl = $info['template'];
 		} elseif (!empty($category['template_detail'])){ //分类已定制模板
 			$tmpl = $category['template_detail'];
-		} elseif(strcmp($category['model'], '2') !== 0) { //使用默认模板
-			$tmpl = 'Article/show_'. get_model($category['model'],'name');
-		}else{
-			$tmpl = 'Article/show';
+		} else { //使用默认模板
+			$tmpl = 'Article/'. get_document_model($info['model_id'],'name') .'/detail';
 		}
+
 		/* 更新浏览数 */
 		$map = array('id' => $id);
 		$Document->where($map)->setInc('view');
@@ -99,10 +88,9 @@ class ArticleController extends HomeController {
 	}
 
 	/* 文档分类检测 */
-	private function category($cid = 0){
+	private function category($id = 0){
 		/* 标识正确性检测 */
-		$id = $id ? $id : I('get.cid', 0);
-
+		$id = $id ? $id : I('get.category', 0);
 		if(empty($id)){
 			$this->error('没有指定文档分类！');
 		}
@@ -123,20 +111,4 @@ class ArticleController extends HomeController {
 		}
 	}
 
-	public function page($cid)
-	{
-		$category = $this->category($cid);
-		if(!empty($category['template_index'])){
-			$tpl = $category['template_index'];
-		}elseif(!empty($category['template_list'])){
-			$tpl = $category['template_list'];
-		}elseif(!empty($category['template_detail'])){
-			$tpl = $category['template_detail'];
-		}else{
-			$tpl = 'Article/page';
-		}
-		$this->assign('category',$category);
-		$this->assign('content',$category['content']);
-		$this->display($tpl);
-	}
 }

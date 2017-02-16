@@ -1,7 +1,10 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 
 namespace Home\Model;
@@ -73,17 +76,16 @@ class DocumentModel extends Model{
 	 * @param  integer $id 文档ID
 	 * @return array       详细数据
 	 */
-	public function show($id){
+	public function detail($id){
 		/* 获取基础数据 */
 		$info = $this->field(true)->find($id);
 		if(!(is_array($info) || 1 !== $info['status'])){
 			$this->error = '文档被禁用或已删除！';
 			return false;
 		}
-		
+
 		/* 获取模型数据 */
 		$logic  = $this->logic($info['model_id']);
-
 		$detail = $logic->detail($id); //获取指定ID的数据
 		if(!$detail){
 			$this->error = $logic->getError();
@@ -302,7 +304,7 @@ class DocumentModel extends Model{
 	 * @return object         模型对象
 	 */
 	private function logic($model){
-		return D(get_model($model, 'name'), 'Logic');
+		return D(get_document_model($model, 'name'), 'Logic');
 	}
 
 	/**

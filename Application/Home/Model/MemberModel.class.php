@@ -1,7 +1,10 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 
 namespace Home\Model;
@@ -24,17 +27,6 @@ class MemberModel extends Model{
         array('status', 1, self::MODEL_INSERT),
     );
 
-    /*获取信息*/
-    public function info($uid,$colum)
-    {   
-        $user = $this->where('uid='.$uid)->find();
-        return $user[$colum];
-    }
-
-    public function update($uid,$data)
-    {
-        return $this->where('uid='.$uid)->save($data);
-    }
     /**
      * 登录指定用户
      * @param  integer $uid 用户ID

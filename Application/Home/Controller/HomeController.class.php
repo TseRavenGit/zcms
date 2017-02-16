@@ -1,7 +1,10 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 
 namespace Home\Controller;
@@ -20,11 +23,9 @@ class HomeController extends Controller {
 
 
     protected function _initialize(){
-        /* 读取站点配置和rewrite信息 */
+        /* 读取站点配置 */
         $config = api('Config/lists');
         C($config); //添加配置
-        //加载rewrite
-        //$this->loadRewrite();
 
         if(!C('WEB_SITE_CLOSE')){
             $this->error('站点已经关闭，请稍后访问~');
@@ -37,27 +38,4 @@ class HomeController extends Controller {
 		is_login() || $this->error('您还没有登录，请先登录！', U('User/login'));
 	}
 
-	protected function loadRewrite(){
-		//加载rewrite信息
-        $url = M('Url')->where($map)->field('url,short')->select();
-        foreach ($url as $v) {
-            $rewrite[$v['short']] = $v['url'];
-        }
-        $rewrite_config = array('URL_ROUTE_RULES'=>$rewrite);
-        $config_file = APP_PATH.'\Home\conf\config.php';
-        $this->sp_set_config($config_file,$rewrite_config);
-    }
-
-    /*
-	 * 作用：修改配置文件
-	 * 参数: $file, string, 配置文件文职
-	 *       $config_array, array, 需要修改的参数
-	 */
-	function sp_set_config($file,$config_array){
-		if (is_writable($file)) {
-			$config = require $file;
-			$config_content = array_merge($config, $config_array);
-			file_put_contents($file, "<?php \nreturn " . stripslashes(var_export($config_content, true)) . ";", LOCK_EX);
-		}
-	}
 }

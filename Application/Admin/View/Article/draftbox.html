@@ -17,7 +17,7 @@
 	<!-- 按钮工具栏 -->
 	<div class="cf">
 		<div class="fl">
-			<button class="btn J_ajax_post confirm" target-form="ids" url="{:U("Article/setStatus",array("status"=>-1))}">删 除</button>
+			<button class="btn ajax-post confirm" target-form="ids" url="{:U("Article/setStatus",array("status"=>-1))}">删 除</button>
 		</div>
 
 		<!-- 高级搜索 -->
@@ -50,8 +50,8 @@
 			<td><span>{:get_cate($vo['category_id'])}</span></td>
 			<td><span>{$vo.update_time|time_format}</span></td>
 			<td><a href="{:U('Article/edit?cate_id='.$vo['category_id'].'&id='.$vo['id'])}">编辑</a>
-				<a href="{:U('Article/setstatus?ids='.$vo['id'].'&status='.abs(1-$vo['status']))}" class="J_ajax_get">{$vo.status|show_status_op}</a>
-				<a href="{:U('Article/setStatus?status=-1&ids='.$vo['id'])}" class="confirm J_ajax_get">删除</a>
+				<a href="{:U('Article/setstatus?ids='.$vo['id'].'&status='.abs(1-$vo['status']))}" class="ajax-get">{$vo.status|show_status_op}</a>
+				<a href="{:U('Article/setStatus?status=-1&ids='.$vo['id'])}" class="confirm ajax-get">删除</a>
                 </td>
 		</tr>
 		</volist>

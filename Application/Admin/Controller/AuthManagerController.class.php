@@ -1,5 +1,8 @@
 <?php
-
+// +----------------------------------------------------------------------
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Author: 朱亚杰 <zhuyajie@topthink.net>
 // +----------------------------------------------------------------------
@@ -25,15 +28,16 @@ class AuthManagerController extends AdminController{
         $nodes    = $this->returnNodes(false);
 
         $AuthRule = M('AuthRule');
-        $map      = array('type'=>array('in','1,2'));//status全部取出,以进行更新
+        $map      = array('module'=>'admin','type'=>array('in','1,2'));//status全部取出,以进行更新
         //需要更新和删除的节点必然位于$rules
         $rules    = $AuthRule->where($map)->order('name')->select();
+
         //构建insert数据
         $data     = array();//保存需要插入和更新的新节点
         foreach ($nodes as $value){
             $temp['name']   = $value['url'];
             $temp['title']  = $value['title'];
-            $temp['module'] = $value['module'];
+            $temp['module'] = 'admin';
             if($value['pid'] >0){
                 $temp['type'] = AuthRuleModel::RULE_URL;
             }else{
@@ -128,9 +132,9 @@ class AuthManagerController extends AdminController{
         $auth_group = M('AuthGroup')->where( array('status'=>array('egt','0'),'module'=>'admin','type'=>AuthGroupModel::TYPE_ADMIN) )
                                     ->getfield('id,id,title,rules');
         $node_list   = $this->returnNodes();
-        $map         = array('type'=>AuthRuleModel::RULE_MAIN,'status'=>1);
+        $map         = array('module'=>'admin','type'=>AuthRuleModel::RULE_MAIN,'status'=>1);
         $main_rules  = M('AuthRule')->where($map)->getField('name,id');
-        $map         = array('type'=>AuthRuleModel::RULE_URL,'status'=>1);
+        $map         = array('module'=>'admin','type'=>AuthRuleModel::RULE_URL,'status'=>1);
         $child_rules = M('AuthRule')->where($map)->getField('name,id');
 
         $this->assign('main_rules', $main_rules);
@@ -139,7 +143,6 @@ class AuthManagerController extends AdminController{
         $this->assign('auth_group', $auth_group);
         $this->assign('this_group', $auth_group[(int)$_GET['group_id']]);
         $this->meta_title = '访问授权';
-
         $this->display('managergroup');
     }
 
@@ -150,12 +153,10 @@ class AuthManagerController extends AdminController{
     public function writeGroup(){
         if(isset($_POST['rules'])){
             sort($_POST['rules']);
-            array_unshift($_POST['rules'],'1');
             $_POST['rules']  = implode( ',' , array_unique($_POST['rules']));
         }
         $_POST['module'] =  'admin';
         $_POST['type']   =  AuthGroupModel::TYPE_ADMIN;
-
         $AuthGroup       =  D('AuthGroup');
         $data = $AuthGroup->create();
         if ( $data ) {

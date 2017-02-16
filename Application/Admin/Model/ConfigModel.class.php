@@ -1,14 +1,17 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: Jroy
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com>
 // +----------------------------------------------------------------------
 
 namespace Admin\Model;
 use Think\Model;
 /**
  * 配置模型
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 
 class ConfigModel extends Model {
@@ -28,7 +31,7 @@ class ConfigModel extends Model {
     /**
      * 获取配置列表
      * @return array 配置数组
-     * @author Jroy
+     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
     public function lists(){
         $map    = array('status' => 1);
@@ -47,7 +50,7 @@ class ConfigModel extends Model {
      * 根据配置类型解析配置
      * @param  integer $type  配置类型
      * @param  string  $value 配置值
-     * @author Jroy
+     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
     private function parse($type, $value){
         switch ($type) {

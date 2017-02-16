@@ -6,7 +6,7 @@
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 // | ImageGd.class.php 2013-03-05
 // +----------------------------------------------------------------------
@@ -298,14 +298,12 @@ class Gd{
      * @param  integer $alpha  水印透明度
      */
     public function water($source, $locate = Image::IMAGE_WATER_SOUTHEAST,$alpha=80){
-
         //资源检测
         if(empty($this->img)) E('没有可以被添加水印的图像资源');
         if(!is_file($source)) E('水印图像不存在');
 
         //获取水印图像信息
         $info = getimagesize($source);
-
         if(false === $info || (IMAGETYPE_GIF === $info[2] && empty($info['bits']))){
             E('非法水印文件');
         }

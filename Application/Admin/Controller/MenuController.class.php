@@ -1,7 +1,10 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: yangweijie <yangweijiester@gmail.com> 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: yangweijie <yangweijiester@gmail.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 
 namespace Admin\Controller;
@@ -11,41 +14,40 @@ namespace Admin\Controller;
  * @author yangweijie <yangweijiester@gmail.com>
  */
 class MenuController extends AdminController {
-    protected $Menu;
+
     /**
      * 后台菜单首页
      * @return none
      */
-    public function index() {
-        $tree = new \Org\Util\Tree;
-        $tree->icon = array('&nbsp;&nbsp;&nbsp;│ ', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ ');
-        $result = M('menu')->order(array("sort"=>"asc"))->select();
-
-        foreach ($result as $r) {
-            $r['str_manage'] = '<a href="' . U("menu/edit", array("id" => $r['id'])) . '">修改</a> | <a class="J_ajax_get confirm" href="' . U("menu/del", array("id" => $r['id'])) . '">删除</a> ';
-            $r['id']=$r['id'];
-            $r['parentid']=$r['pid'];
-            $r['name']=$r['title'];
-            $r['listorder'] = $r['sort'];
-            $r['hide'] = ($r['hide']!=0)?'是':'否';
-            $array[] = $r;
+    public function index(){
+        $pid  = I('get.pid',0);
+        if($pid){
+            $data = M('Menu')->where("id={$pid}")->field(true)->find();
+            $this->assign('data',$data);
         }
-        $tree->init($array);
-        $str = "<tr data-parentid='\$parentid' data-id='\$id'>
-                    <td><input name='ids[\$id]' type='text' value='\$listorder' class='input input-xsmall'></td>
-                    <td>\$id</td>
-                    <td>\$spacer\$name</td>
-                    <td>\$module</td>
-                    <td>\$url</td>
-                    <td>\$hide</td>
-                    <td>\$str_manage</td>
-                </tr>";
-        $taxonomys = $tree->get_tree(0, $str);
+        $title      =   trim(I('get.title'));
+        $type       =   C('CONFIG_GROUP_LIST');
+        $all_menu   =   M('Menu')->getField('id,title');
+        $map['pid'] =   $pid;
+        if($title)
+            $map['title'] = array('like',"%{$title}%");
+        $list       =   M("Menu")->where($map)->field(true)->order('sort asc,id asc')->select();
+        int_to_string($list,array('hide'=>array(1=>'是',0=>'否'),'is_dev'=>array(1=>'是',0=>'否')));
+        if($list) {
+            foreach($list as &$key){
+                if($key['pid']){
+                    $key['up_title'] = $all_menu[$key['pid']];
+                }
+            }
+            $this->assign('list',$list);
+        }
+        // 记录当前列表页的cookie
+        Cookie('__forward__',$_SERVER['REQUEST_URI']);
 
-        Cookie('__forward__',U('Menu/index'));
-        $this->assign("taxonomys", $taxonomys);
+        $this->meta_title = '菜单列表';
         $this->display();
     }
+
     /**
      * 新增菜单
      * @author yangweijie <yangweijiester@gmail.com>
@@ -93,7 +95,6 @@ class MenuController extends AdminController {
                     action_log('update_menu', 'Menu', $data['id'], UID);
                     $this->success('更新成功', Cookie('__forward__'));
                 } else {
-                    //var_dump($Menu->getlastsql());die;
                     $this->error('更新失败');
                 }
             } else {
@@ -161,7 +162,7 @@ class MenuController extends AdminController {
                     'pid'=>$pid,
                     'hide'=>isset($value['hide'])? (int)$value['hide'] : 0,
                     'tip'=>isset($value['tip'])? $value['tip'] : '',
-                    'ico'=>$value['ico'],
+                    'group'=>$value['group'],
                 )
             );
             if($value['operator']){
@@ -189,7 +190,8 @@ class MenuController extends AdminController {
                             'sort'=>0,
                             'hide'=>0,
                             'tip'=>'',
-                            'ico'=>'',
+                            'is_dev'=>0,
+                            'group'=>'',
                         ));
                     }
                 }
@@ -230,10 +232,9 @@ class MenuController extends AdminController {
             $this->display();
         }elseif (IS_POST){
             $ids = I('post.ids');
-            //$ids = explode(',', $ids);
-
+            $ids = explode(',', $ids);
             foreach ($ids as $key=>$value){
-                $res = M('Menu')->where(array('id'=>$key))->setField('sort', $value);
+                $res = M('Menu')->where(array('id'=>$value))->setField('sort', $key+1);
             }
             if($res !== false){
                 $this->success('排序成功！');

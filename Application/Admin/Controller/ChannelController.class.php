@@ -1,21 +1,24 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 
 namespace Admin\Controller;
 
 /**
  * 后台频道控制器
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 
 class ChannelController extends AdminController {
 
     /**
      * 频道列表
-     * @author Jroy
+     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
     public function index(){
         $pid = i('get.pid', 0);
@@ -31,7 +34,7 @@ class ChannelController extends AdminController {
 
     /**
      * 添加频道
-     * @author Jroy
+     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
     public function add(){
         if(IS_POST){
@@ -66,7 +69,7 @@ class ChannelController extends AdminController {
 
     /**
      * 编辑频道
-     * @author Jroy
+     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
     public function edit($id = 0){
         if(IS_POST){
@@ -109,7 +112,7 @@ class ChannelController extends AdminController {
 
     /**
      * 删除频道
-     * @author Jroy
+     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
     public function del(){
         $id = array_unique((array)I('id',0));

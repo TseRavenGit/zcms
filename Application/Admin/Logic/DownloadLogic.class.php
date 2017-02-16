@@ -1,5 +1,8 @@
 <?php
-
+// +----------------------------------------------------------------------
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Author: huajie <banhuajie@163.com>
 // +----------------------------------------------------------------------
@@ -15,7 +18,7 @@ class DownloadLogic extends BaseLogic{
 	protected $_validate = array(
 		array('content', 'require', '详细内容不能为空！', self::MUST_VALIDATE , 'regex', self::MODEL_BOTH),
 		array('download', 'number', '下载次数请输入整数！', self::VALUE_VALIDATE , 'regex', self::MODEL_BOTH),
-		//array('file_id', 'require', '请上传附件！', self::MUST_VALIDATE , 'regex', self::MODEL_BOTH),
+		array('file_id', 'require', '请上传附件！', self::MUST_VALIDATE , 'regex', self::MODEL_BOTH),
 	);
 
 	/* 自动完成规则 */
@@ -44,17 +47,20 @@ class DownloadLogic extends BaseLogic{
 	 */
 	public function update($id = 0){
 		/* 获取下载数据 */ //TODO: 根据不同用户获取允许更改或添加的字段
-		$info = I('post.');
-		$download = $this->doDownload($info);
-		if($download){
-			$data = array_merge($info,$download);
+		$data = $this->create();
+		if(!$data){
+			return false;
 		}
 
-		if(empty($data)){
+		$file = json_decode(think_decrypt(I('post.file_id')), true);
+		if(!empty($file)){
+			$data['file_id'] = $file['id'];
+			$data['size']    = $file['size'];
+		} else {
 			$this->error = '获取上传文件信息失败！';
 			return false;
 		}
-		$data = $this->create($data);
+
 		/* 添加或更新数据 */
 		if(empty($data['id'])){//新增数据
 			$data['id'] = $id;
@@ -140,15 +146,5 @@ class DownloadLogic extends BaseLogic{
 
 		return true;
 	}
-
-	//处理下载内容的值
-    public function doDownload($data)
-    {
-        foreach($data['download'] as $k=>$v){
-            $v = json_decode(think_decrypt($v),true);
-            $download[$k] = $v['id']?$v['id']:0;
-        }
-        return $download;
-    }
 
 }

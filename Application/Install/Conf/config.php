@@ -1,7 +1,10 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 
 /**
@@ -12,7 +15,7 @@ define('INSTALL_APP_PATH', realpath('./') . '/');
 
 return array(
     
-    'ORIGINAL_TABLE_PREFIX' => 'zs_', //默认表前缀
+    'ORIGINAL_TABLE_PREFIX' => 'onethink_', //默认表前缀
 
     /* 模板相关配置 */
     'TMPL_PARSE_STRING' => array(

@@ -1,5 +1,8 @@
 <?php
-
+// +----------------------------------------------------------------------
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Author: huajie <banhuajie@163.com>
 // +----------------------------------------------------------------------
@@ -27,6 +30,8 @@ class DocumentModel extends Model{
         array('category_id', 'require', '分类不能为空', self::EXISTS_VALIDATE , 'regex', self::MODEL_UPDATE),
         array('category_id', 'checkCategory', '该分类不允许发布内容', self::EXISTS_VALIDATE , 'callback', self::MODEL_UPDATE),
         array('model_id,category_id', 'checkModel', '该分类没有绑定当前模型', self::MUST_VALIDATE , 'callback', self::MODEL_INSERT),
+        array('deadline', '/^\d{4,4}-\d{1,2}-\d{1,2}(\s\d{1,2}:\d{1,2}(:\d{1,2})?)?$/', '日期格式不合法,请使用"年-月-日 时:分"格式,全部为数字', self::VALUE_VALIDATE  , 'regex', self::MODEL_BOTH),
+        array('create_time', '/^\d{4,4}-\d{1,2}-\d{1,2}(\s\d{1,2}:\d{1,2}(:\d{1,2})?)?$/', '日期格式不合法,请使用"年-月-日 时:分"格式,全部为数字', self::VALUE_VALIDATE  , 'regex', self::MODEL_BOTH),
     );
 
     /* 自动完成规则 */
@@ -139,28 +144,29 @@ class DocumentModel extends Model{
      * @return boolean fasle 失败 ， int  成功 返回完整的数据
      * @author huajie <banhuajie@163.com>
      */
-    public function update($info = null){
+    public function update($data = null){
+    	/* 检查文档类型是否符合要求 */
+    	$res = $this->checkDocumentType( I('type'), I('pid') );
+    	if(!$res['status']){
+    		$this->error = $res['info'];
+    		return false;
+    	}
+
         /* 获取数据对象 */
-        $data = $this->create($info);
+        $data = $this->create($data);
         if(empty($data)){
             return false;
         }
-        //转换gallery为字符串，以后的数组参数都可如此处理
-        if($data['gallery']){
-            $data['gallery'] = $this->arrayToStr($data['gallery']);
-        }else{
-            $data['gallery'] = '0';
-        }
-        
+
         /* 添加或新增基础内容 */
         if(empty($data['id'])){ //新增数据
-            $id = $this->add($data); //添加基础内容
+            $id = $this->add(); //添加基础内容
             if(!$id){
                 $this->error = '新增基础内容出错！';
                 return false;
             }
         } else { //更新数据
-            $status = $this->save($data); //更新基础内容
+            $status = $this->save(); //更新基础内容
             if(false === $status){
                 $this->error = '更新基础内容出错！';
                 return false;
@@ -422,20 +428,6 @@ class DocumentModel extends Model{
         }
     }
 
-     /**
-     * 数组转换成字符串
-     * @return string 字符串
-     * @author jroy
-     */
-    protected function arrayToStr($gallery = null){
-        if(is_array($gallery)){
-            foreach ($gallery as $v) {
-                $cids .= $v.',';
-            }
-            $gallery = substr($cids,0,-1);
-        }
-        return $gallery;
-    }
 
     /**
      * 删除状态为-1的数据（包含扩展模型）
@@ -488,6 +480,83 @@ class DocumentModel extends Model{
     }
 
     /**
+     * 保存为草稿
+     * @return array 完整的数据， false 保存出错
+     * @author huajie <banhuajie@163.com>
+     */
+    public function autoSave(){
+        $post = I('post.');
+
+        /* 检查文档类型是否符合要求 */
+        $res = $this->checkDocumentType( I('type'), I('pid') );
+        if(!$res['status']){
+        	$this->error = $res['info'];
+        	return false;
+        }
+
+        //触发自动保存的字段
+        $save_list = array('name','title','description','position','link_id','cover_id','deadline','create_time','content');
+        foreach ($save_list as $value){
+            if(!empty($post[$value])){
+                $if_save = true;
+                break;
+            }
+        }
+
+        if(!$if_save){
+            $this->error = '您未填写任何内容';
+            return false;
+        }
+
+        //重置自动验证
+        $this->_validate = array(
+            array('name', '/^[a-zA-Z]\w{0,39}$/', '文档标识不合法', self::VALUE_VALIDATE, 'regex', self::MODEL_BOTH),
+            array('name', '', '标识已经存在', self::VALUE_VALIDATE, 'unique', self::MODEL_BOTH),
+            array('title', '1,80', '标题长度不能超过80个字符', self::VALUE_VALIDATE, 'length', self::MODEL_BOTH),
+            array('description', '1,140', '简介长度不能超过140个字符', self::VALUE_VALIDATE, 'length', self::MODEL_BOTH),
+            array('category_id', 'require', '分类不能为空', self::MUST_VALIDATE , 'regex', self::MODEL_BOTH),
+            array('category_id', 'checkCategory', '该分类不允许发布内容', self::EXISTS_VALIDATE , 'callback', self::MODEL_UPDATE),
+            array('model_id,category_id', 'checkModel', '该分类没有绑定当前模型', self::MUST_VALIDATE , 'callback', self::MODEL_INSERT),
+            array('deadline', '/^\d{4,4}-\d{1,2}-\d{1,2}(\s\d{1,2}:\d{1,2}(:\d{1,2})?)?$/', '日期格式不合法,请使用"年-月-日 时:分"格式,全部为数字', self::VALUE_VALIDATE  , 'regex', self::MODEL_BOTH),
+            array('create_time', '/^\d{4,4}-\d{1,2}-\d{1,2}(\s\d{1,2}:\d{1,2}(:\d{1,2})?)?$/', '日期格式不合法,请使用"年-月-日 时:分"格式,全部为数字', self::VALUE_VALIDATE  , 'regex', self::MODEL_BOTH),
+        );
+        $this->_auto[] = array('status', '3', self::MODEL_BOTH);
+
+        if(!($data = $this->create())){
+            return false;
+        }
+
+        /* 添加或新增基础内容 */
+        if(empty($data['id'])){ //新增数据
+            $id = $this->add(); //添加基础内容
+            if(!$id){
+    			$this->error = '新增基础内容出错！';
+                return false;
+            }
+            $data['id'] = $id;
+        } else { //更新数据
+            $status = $this->save(); //更新基础内容
+            if(false === $status){
+    			$this->error = '更新基础内容出错！';
+                return false;
+            }
+        }
+
+        /* 添加或新增扩展内容 */
+        $logic = $this->logic($data['model_id']);
+        if(!$logic->autoSave($id)){
+            if(isset($id)){ //新增失败，删除基础数据
+                $this->delete($id);
+            }
+            $this->error = $logic->getError();
+            return false;
+        }
+
+        //内容添加或更新完成
+        return $data;
+    }
+
+    /**
      * 获取目录列表
      * @param intger $pid 目录的根节点
      * @return boolean
@@ -527,6 +596,46 @@ class DocumentModel extends Model{
     		$tree = array_merge($child, $this->getChild($pids));
     	}
     	return $tree;
+    }
+
+    /**
+     * 检查指定文档下面子文档的类型
+     * @param intger $type 子文档类型
+     * @param intger $pid 父文档类型
+     * @return array 键值：status=>是否允许（0,1），'info'=>提示信息
+     * @author huajie <banhuajie@163.com>
+     */
+    public function checkDocumentType($type = null, $pid = null){
+    	$res = array('status'=>1, 'info'=>'');
+		if(empty($type)){
+			return array('status'=>0, 'info'=>'文档类型不能为空');
+		}
+		if(empty($pid)){
+			return $res;
+		}
+		//查询父文档的类型
+		if(is_numeric($pid)){
+			$ptype = $this->getFieldById($pid, 'type');
+		}else{
+			$ptype = $this->getFieldByName($pid, 'type');
+		}
+		//父文档为目录时
+		if($ptype == 1){
+			return $res;
+		}
+		//父文档为主题时
+		if($ptype == 2){
+			if($type != 3){
+				return array('status'=>0, 'info'=>'主题下面只允许添加段落');
+			}else{
+				return $res;
+			}
+		}
+		//父文档为段落时
+		if($ptype == 3){
+			return array('status'=>0, 'info'=>'段落下面不允许再添加子内容');
+		}
+		return array('status'=>0, 'info'=>'父文档类型不正确');
     }
 
 }

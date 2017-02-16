@@ -1,66 +1,80 @@
 <extend name="Public/base"/>
+
 <block name="body">
-	<div class="g-wrap">
-		<div class="u-tab">
-		    <ul class="cc">
-		      <li class="current"><a href="javasctipt:;">栏目管理 </a></li>
-		      <li><a href="{:U('add')}">添加栏目 </a></li>
-		    </ul>
-		</div>
-		<p class="mb10 red">添加栏目时，请注意选择内容模型，已添加资料的栏目无法更换模型！</p>
-        <div class="common-form">
-            <form method="post" action="{:U('setOrder')}" class="category-list">
-            <div class="table_list u-table-left j-hidden-level">
-                <table width="100%">
-                <thead>
-                  <tr>
-                    <th width="80">排序</th>
-                    <th width="100">ID</th>
-                    <th>栏目名称</th>
-                    <th>内容模型</th>
-                    <th>栏目属性</th>
-                    <th>状态</th>
-                    <th>操作</th>
-                  </tr>
-                </thead>
-                <tbody>
-                    {$category}
-                </tbody>
-                </table>
-                <div class="btn_wrap">
-                  <div class="btn_wrap_pd">
-                  	<a class="btn btn_small J_ajax_get" href="{:U('Index/setKey',array('cid'=>$_GET['menuId'],'title'=>$meta_title))}"><i class="fa fa-heart"></i></a>
-                    <a class="btn J_ajax_post" target-form='category-list' url="{:U('setOrder')}">排序</a>
-                  </div>
-                </div>
-            </div>
-            </form>
-        </div>
+	<div class="main-title">
+		<h2>分类管理</h2>
 	</div>
+
+	<!-- 表格列表 -->
+	<div class="tb-unit posr">
+		<div class="tb-unit-bar">
+			<a class="btn" href="{:U('add')}">新 增</a>
+		</div>
+		<div class="category">
+			<div class="hd cf">
+				<div class="fold">折叠</div>
+				<div class="order">排序</div>
+				<div class="order">发布</div>
+				<div class="name">名称</div>
+			</div>
+			{:R('Category/tree', array($tree))}
+		</div>
+	</div>
+	<!-- /表格列表 -->
 </block>
 
 <block name="script">
 	<script type="text/javascript">
 		(function($){
-	      var $level = $(".j-hidden-level table").find("tbody tr");
-	      $level.each(function(){
-	          var $this_level = $(this).attr('data-parentid');
-	          if($this_level=='0'){
-	              $(this).show();
-	          }
-	          if($(this).next('tr').attr('data-parentid')>$this_level){
-	            $(this).find('td:eq(2)').append("&nbsp;&nbsp;<i class='fa fa-caret-right'></i>");
-	          }
-	          if($(this).next('tr').attr('data-parentid')>0){
-	             $(this).addClass('hand');
-	             $(this).click(function(){
-	                var $i = $(this).find('i');
-	                $i.toggleClass('fa-caret-right');
-	                $i.toggleClass('fa-caret-down');
-	                $(this).nextAll('tr[data-parentid='+$(this).attr('data-id')+']').toggle();
-	             })
-	          }
-	      });
+			/* 分类展开收起 */
+			$(".category dd").prev().find(".fold i").addClass("icon-unfold")
+				.click(function(){
+					var self = $(this);
+					if(self.hasClass("icon-unfold")){
+						self.closest("dt").next().slideUp("fast", function(){
+							self.removeClass("icon-unfold").addClass("icon-fold");
+						});
+					} else {
+						self.closest("dt").next().slideDown("fast", function(){
+							self.removeClass("icon-fold").addClass("icon-unfold");
+						});
+					}
+				});
+
+			/* 三级分类删除新增按钮 */
+			$(".category dd dd .add-sub").remove();
+
+			/* 实时更新分类信息 */
+			$(".category")
+				.on("submit", "form", function(){
+					var self = $(this);
+					$.post(
+						self.attr("action"),
+						self.serialize(),
+						function(data){
+							/* 提示信息 */
+							var name = data.status ? "success" : "error", msg;
+							msg = self.find(".msg").addClass(name).text(data.info)
+									  .css("display", "inline-block");
+							setTimeout(function(){
+								msg.fadeOut(function(){
+									msg.text("").removeClass(name);
+								});
+							}, 1000);
+						},
+						"json"
+					);
+					return false;
+				})
+                .on("focus","input",function(){
+                    $(this).data('param',$(this).closest("form").serialize());
+
+                })
+                .on("blur", "input", function(){
+                    if($(this).data('param')!=$(this).closest("form").serialize()){
+                        $(this).closest("form").submit();
+                    }
+                });
 		})(jQuery);
 	</script>
 </block>

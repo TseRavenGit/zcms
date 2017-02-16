@@ -1,20 +1,23 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 
 namespace Admin\Controller;
 
 /**
  * 后台配置控制器
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 class ConfigController extends AdminController {
 
     /**
      * 配置管理
-     * @author Jroy
+     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
     public function index(){
         /* 查询条件初始化 */
@@ -27,7 +30,7 @@ class ConfigController extends AdminController {
             $map['name']    =   array('like', '%'.(string)I('name').'%');
         }
 
-        $list = $this->lists('Config', $map,'sort asc,id asc');
+        $list = $this->lists('Config', $map,'sort,id');
         // 记录当前列表页的cookie
         Cookie('__forward__',$_SERVER['REQUEST_URI']);
 
@@ -40,7 +43,7 @@ class ConfigController extends AdminController {
 
     /**
      * 新增配置
-     * @author Jroy
+     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
     public function add(){
         if(IS_POST){
@@ -65,7 +68,7 @@ class ConfigController extends AdminController {
 
     /**
      * 编辑配置
-     * @author Jroy
+     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
     public function edit($id = 0){
         if(IS_POST){
@@ -99,10 +102,9 @@ class ConfigController extends AdminController {
 
     /**
      * 批量保存配置
-     * @author Jroy
+     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
     public function save($config){
-
         if($config && is_array($config)){
             $Config = M('Config');
             foreach ($config as $name => $value) {
@@ -116,7 +118,7 @@ class ConfigController extends AdminController {
 
     /**
      * 删除配置
-     * @author Jroy
+     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
     public function del(){
         $id = array_unique((array)I('id',0));
@@ -139,14 +141,10 @@ class ConfigController extends AdminController {
     // 获取某个标签的配置参数
     public function group() {
         $id     =   I('get.id',1);
-        $sid = (strpos($id, '69')>-1)?1:$id;
         $type   =   C('CONFIG_GROUP_LIST');
-        $list   =   M("Config")->where(array('status'=>1,'group'=>$sid))->field('id,name,title,extra,value,remark,type')->order('sort')->select();
+        $list   =   M("Config")->where(array('status'=>1,'group'=>$id))->field('id,name,title,extra,value,remark,type')->order('sort')->select();
         if($list) {
             $this->assign('list',$list);
-        }
-        if(strcmp($id, 'img') == 0){
-            $this->assign('img',$id);
         }
         $this->assign('id',$id);
         $this->meta_title = $type[$id].'设置';

@@ -1,7 +1,10 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 namespace Admin\Controller;
 /**
@@ -12,16 +15,16 @@ class FileController extends AdminController {
 
     /* 文件上传 */
     public function upload(){
-        $return  = array('status' => 1, 'info' => '上传成功', 'data' => '');
-        /* 调用文件上传组件上传文件 */
-        $File = D('File');
-        $file_driver = C('DOWNLOAD_UPLOAD_DRIVER');
-        $info = $File->upload(
-            $_FILES,
-            C('DOWNLOAD_UPLOAD'),
-            C('DOWNLOAD_UPLOAD_DRIVER'),
-            C("UPLOAD_{$file_driver}_CONFIG")
-        );
+		$return  = array('status' => 1, 'info' => '上传成功', 'data' => '');
+		/* 调用文件上传组件上传文件 */
+		$File = D('File');
+		$file_driver = C('DOWNLOAD_UPLOAD_DRIVER');
+		$info = $File->upload(
+			$_FILES,
+			C('DOWNLOAD_UPLOAD'),
+			C('DOWNLOAD_UPLOAD_DRIVER'),
+			C("UPLOAD_{$file_driver}_CONFIG")
+		);
 
         /* 记录附件信息 */
         if($info){
@@ -54,7 +57,8 @@ class FileController extends AdminController {
      * @author huajie <banhuajie@163.com>
      */
     public function uploadPicture(){
-        
+        //TODO: 用户登录检测
+
         /* 返回标准数据 */
         $return  = array('status' => 1, 'info' => '上传成功', 'data' => '');
 
@@ -76,44 +80,8 @@ class FileController extends AdminController {
             $return['status'] = 0;
             $return['info']   = $Picture->getError();
         }
-        //如果开启水印
-        if($config['img_water_on'] == 2){
-            /*添加水印*/
-            $config['img_water_on'] = get_config('IMG_WATER_ON');
-            $config['img_water'] = get_product_image(get_config('IMG_WATER'));
-            $config['img_water_postion'] = get_config('IMG_WATER_POSTION');
-            $img_path = '.'.$info['download']['path'];
 
-            $image = new \Think\Image();
-            $image->open($img_path)->water('.'.$config['img_water'],$config['img_water_postion'])->save($img_path); 
-        }
+        /* 返回JSON数据 */
         $this->ajaxReturn($return);
-    }
-
-    /*
-    * 多图上传删除图片操作
-    * @param $id 操作对象id
-    * @param $image_id 图片id  
-    * @param $model
-    */
-    public function deletePic($id,$image_id){
-        $_obj = D('Document');
-        $info = $_obj->detail($id);
-        if(!$info){
-            $this->error('参数错误，请重试！');
-        }
-        $gallery = explode(',', $info['gallery']);
-        foreach ($gallery as $k=>$v) {
-            if($v == $image_id){unset($gallery[$k]);}
-        }
-        $data['id'] = $id;
-        $data['gallery'] = implode(',', $gallery);
-        /* 添加或新增扩展内容 */
-        $res = M('Document')->save($data);
-        if(!$res){
-            $this->error($_obj->getError());
-        }else{
-            $this->success('删除成功', Cookie('__forward__'));
-        }
     }
 }

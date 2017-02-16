@@ -36,13 +36,13 @@
                         <td>{$channel.sort}</td>
 						<td>
 							<a title="编辑" href="{:U('edit?id='.$channel['id'].'&pid='.$pid)}">编辑</a>
-							<a href="{:U('setStatus?ids='.$channel['id'].'&status='.abs(1-$channel['status']))}" class="J_ajax_get">{$channel.status|show_status_op}</a>
-							<a class="confirm J_ajax_get" title="删除" href="{:U('del?id='.$channel['id'])}">删除</a>
+							<a href="{:U('setStatus?ids='.$channel['id'].'&status='.abs(1-$channel['status']))}" class="ajax-get">{$channel.status|show_status_op}</a>
+							<a class="confirm ajax-get" title="删除" href="{:U('del?id='.$channel['id'])}">删除</a>
 						</td>
 					</tr>
 				</volist>
 				<else/>
-				<td colspan="6" class="input-center"> aOh! 暂时还没有内容! </td>
+				<td colspan="6" class="text-center"> aOh! 暂时还没有内容! </td>
 				</notempty>
 			</tbody>
 		</table>

@@ -1,7 +1,10 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 
 namespace Home\Controller;
@@ -158,91 +161,4 @@ class UserController extends HomeController {
         }
     }
 
-    /*
-	*用户中心
-    */
-    public function center()
-    {
-    	$this->display();
-    }
-
-    public function address()
-    {
-    	$user = session('user_auth');
-    	if(IS_POST){
-    		$address_obj = M('address');
-	        $rules = array(
-	            array('email','email','请输入正确的邮箱地址'),
-	            array('email','require','请输入邮箱地址'),
-	            array('country','require','请输入国家'),
-	            array('province','require','请输入省会'),
-	            array('district','require','请输入县市'),
-	            array('zipcode','require','请输入邮政编码'),
-	        );
-	        if(!$address_obj->validate($rules)->auto($auto_rule)->create()){
-	        	$this->error($address_obj->getError());
-	        }else{
-	        	$address = I('post.');
-	        	if(!$address['id']){
-	        		$address['create_time'] = time();
-	        		$address['uid'] = $user['uid'];
-	        		$res = $address_obj->add($address);
-	        		//更新用户真实姓名
-	        		M('Member')->where('uid='.$user['uid'])->save(array('name'=>$address['name']));   	
-	        	}else{
-	        		$res =$address_obj->where('id='.$address['id'])->save();
-	        	}
-	        }
-    		if(!$res){
-    			$this->error('地址操作错误');
-    		}else{
-    			$this->success('地址操作成功');
-    		}
-    	}else{
-    		$id = I('get.id');
-    		if($id){
-    			$address = M('address')->find($id);
-    			$this->assign('address',$address);
-    		}
-    		$lists = M('address')->where('uid='.$user['uid'])->select();
-    		$address = D('Member')->info($user['uid'],'address');
-    		$this->assign('address',$address);
-    		$this->assign('lists',$lists);
-
-    		$this->display();
-    	}
-    }
-
-    public function deleteAddress()
-    {	
-    	$user = session('user_auth');
-    	$id = I('get.id');
-    	if(!$id){
-    		$this->error('参数错误');
-    	}
-    	$res = M('address')->delete($id);
-    	//删除用户地址信息
-    	$user_res = M('Member')->where('uid='.$user['id'])->save('address=0');
-    	if(!$res){
-    		$this->error('地址删除失败!');
-    	}else{
-    		$this->success('地址删除成功!');
-    	}
-    }
-
-    public function addSet()
-    {
-    	$user = session('user_auth');
-    	$id = I('get.id');
-    	if(!$id){
-    		$this->error('参数错误');
-    	}
-    	$res = M('Member')->where('uid='.$user['uid'])->save(array('address'=>$id));
-
-    	if($res !== false){
-    		$this->success('设置成功!');
-    	}else{
-    		$this->error('设置失败!');
-    	}
-    }
 }

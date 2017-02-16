@@ -1,110 +1,107 @@
 <extend name="Public/base"/>
 
-<block name="body">
-	<div class="g-wrap">
-		<!-- 按钮工具栏 -->
-		<div class="u-tab">
-			<?php 
-				$cid = session('admin_category_id');
-				$model_title = get_model_title($_GET['model_id']);
-			?>
-		    <ul class="cc">
-		      	<li class="current"><a href="javascript:;">所有{$model_title}</a></li>
-		      	<notempty name="cid">
-		    	   <li><a target="_self" href="{:U('article/add',array('term'=>$term['term_id']))}">添加{$model_title}</a></li>
-		  		</notempty>
-		    </ul>
-		</div>
-	    <div class="search_type cc mb10 search-form">
-	      <div class="mb10">
-	        <span class="mr20">分类：
-	        <select class="select_2 select" name="cate_id">
-	          	<option value='0' >全部</option>
-	          	{$category}
-	        </select>
-	        <span class="mr20">状态：
-        	<php>
-        		$all = ($status)?'selected':'';
-        		$first = ($status==1)?'selected':'';
-        		$second = ($status==2)?'selected':'';
-        	</php>
-	        <select class="select_2 select" id="sch-sort-txt" name="term">
-	          	<option value="" {$all}>全部</option>
-	          	<option value="1" {$first}>已审核</option>
-	          	<option value="2" {$second}>待审核</option>
-	        </select>
-	        &nbsp;&nbsp;时间：
-	        <input type="text" name="time-start" id="time-start" class="input length_2" value="{:I('time-start')}" style="width:80px;" autocomplete="off" placeholder="起始时间">-<span class="input-append date" id="datetimepicker"><input type="text" id="time-end" name="time-end" class="input input" value="{:I('time-end')}" placeholder="结束时间" /><span class="add-on" style="background:none;border:none;"><i class="icon-th"></i></span></span>
-	        &nbsp; &nbsp;标题：
-	        <input type="text" class="input length_2" name="title" style="width:200px;" value="{:I('title')}" placeholder="请输入标题文档">
-	        <a class="u-btn" href="javascript:;" id="search" url="{:U('article/mydocument')}">搜索</a>
-	        <!-- <a href="javascript:;" class="u-btn" onclick="{:U('post/index',array('resetFiter'=>true))}">重置</a> -->
-	        </span>
-	      </div>
-	    </div>
-		<!-- 数据表格 -->
-	    <div class="table_list">
-			<table class="" width="100%">
-		    <thead>
-		        <tr>
-				<th width="5%"><input class="check-all" type="checkbox"/></th>
-				<th width="5%">编号</th>
-				<th width="25%">标题</th>
-				<th width="12%">分类</th>
-				<th width="12%">最后更新</th>
-				<th width="5%">浏览</th>
-				<th width="5%">状态</th>
-				<th width="10%">操作</th>
-				</tr>
-		    </thead>
-		    <tbody>
-				<volist name="list" id="vo">
-				<tr>
-		            <td><input class="ids" type="checkbox" name="ids[]" value="{$vo.id}" /></td>
-					<td>{$vo.id} </td>
-					<td><a href="{:U('Article/index?cate_id='.$vo['category_id'].'&pid='.$vo['id'])}">{$vo.title}</a></td>
-					<td><span>{:get_cate($vo['category_id'])}</span></td>
-					<td><span>{$vo.update_time|time_format}</span></td>
-					<td>{$vo.view}</td>
-					<?php 
-						switch ($vo['status']) {
-							case '0':
-								$sta = 'red'; //禁用
-								break;
-							case '1':
-								$sta = 'green'; //正常
-								break;
-							default:
-								$sta = '#333';
-								break;
-						}
-					?>
-					<td><span style="color:<?php echo $sta?>">{$vo.status_text}</span></td>
-					<td><a href="{:U('Article/edit?cate_id='.$vo['category_id'].'&id='.$vo['id'])}">编辑</a>
-						<a href="{:U('Article/setStatus?ids='.$vo['id'].'&status='.abs(1-$vo['status']))}" class="J_ajax_get">{$vo.status|show_status_op}</a>
-						<a href="{:U('Article/setStatus?status=-1&ids='.$vo['id'])}" class="confirm J_ajax_get">删除</a>
-		                </td>
-				</tr>
-				</volist>
-			</tbody>
-		    </table> 
-		</div>
-		<div class="btn_wrap">
-			<div class="btn_wrap_pd">
-				<a class="btn btn_small J_ajax_get" href="{:U('Index/setKey',array('cid'=>$_GET['menuId'],'title'=>$meta_title))}"><i class="fa fa-heart"></i></a>
+<!-- 子导航 -->
+<block name="sidebar">
+    <include file="sidemenu" />
+</block>
 
-				<label class="checkbox" data-hasqtip="41" oldtitle="编辑和保存栏目分类" title="" aria-describedby="qtip-41">
-		        <button class="btn J_ajax_post" target-form="ids" url="{:U("Article/setStatus",array("status"=>1))}">审核</button>
-				<button class="btn J_ajax_post" target-form="ids" url="{:U("Article/setStatus",array("status"=>0))}">取消审核</button>
-				<button class="btn J_ajax_post confirm" target-form="ids" url="{:U("Article/setStatus",array("status"=>-1))}">删 除</button>
-				<button class="btn J_ajax_post" target-form="ids" url="{:U("Article/move")}">批量移动</button>
-		    </div>
-		</div>
-		<!-- 分页 -->
-	    <div class="page">
-	        {$_page}
-	    </div>
+
+<block name="body">
+	<!-- 标题 -->
+	<div class="main-title">
+		<h2>
+		我的文档({$_total})
+		</h2>
 	</div>
+
+	<!-- 按钮工具栏 -->
+	<div class="cf">
+		<div class="fl">
+            <button class="btn ajax-post" target-form="ids" url="{:U("Article/setStatus",array("status"=>1))}">启 用</button>
+			<button class="btn ajax-post" target-form="ids" url="{:U("Article/setStatus",array("status"=>0))}">禁 用</button>
+			<button class="btn ajax-post confirm" target-form="ids" url="{:U("Article/setStatus",array("status"=>-1))}">删 除</button>
+		</div>
+
+		<!-- 高级搜索 -->
+		<div class="search-form fr cf">
+			<div class="sleft">
+				<div class="drop-down">
+					<span id="sch-sort-txt" class="sort-txt" data="{$status}"><if condition="get_status_title($status) eq ''">所有<else/>{:get_status_title($status)}</if></span>
+					<i class="arrow arrow-down"></i>
+					<ul id="sub-sch-menu" class="nav-list hidden">
+						<li><a href="javascript:;" value="">所有</a></li>
+						<li><a href="javascript:;" value="1">正常</a></li>
+						<li><a href="javascript:;" value="0">禁用</a></li>
+						<li><a href="javascript:;" value="2">待审核</a></li>
+					</ul>
+				</div>
+				<input type="text" name="title" class="search-input" value="{:I('title')}" placeholder="请输入标题文档">
+				<a class="sch-btn" href="javascript:;" id="search" url="{:U('article/mydocument','pid='.I('pid',0).'&cate_id='.$cate_id,false)}"><i class="btn-search"></i></a>
+			</div>
+            <div class="btn-group-click adv-sch-pannel fl">
+                <button class="btn">高 级<i class="btn-arrowdown"></i></button>
+                <div class="dropdown cf">
+                	<div class="row">
+                		<label>创建时间：</label>
+                		<input type="text" id="time-start" name="time-start" class="text input-2x" value="" placeholder="起始时间" /> -                		
+                        <div class="input-append date" id="datetimepicker"  style="display:inline-block">
+                            <input type="text" id="time-end" name="time-end" class="text input-2x" value="" placeholder="结束时间" />
+                            <span class="add-on"><i class="icon-th"></i></span>
+                        </div>
+                	</div>
+                </div>
+            </div>
+		</div>
+	</div>
+
+
+	<!-- 数据表格 -->
+    <div class="data-table">
+		<table class="">
+    <thead>
+        <tr>
+		<th class="row-selected row-selected"><input class="check-all" type="checkbox"/></th>
+		<th class="">编号</th>
+		<th class="">标题</th>
+		<th class="">子文档</th>
+		<th class="">类型</th>
+		<th class="">分类</th>
+		<th class="">优先级</th>
+		<th class="">最后更新</th>
+		<th class="">浏览</th>
+		<th class="">状态</th>
+		<th class="">操作</th>
+		</tr>
+    </thead>
+    <tbody>
+		<volist name="list" id="vo">
+		<tr>
+            <td><input class="ids" type="checkbox" name="ids[]" value="{$vo.id}" /></td>
+			<td>{$vo.id} </td>
+			<td><a href="{:U('Article/index?cate_id='.$vo['category_id'].'&pid='.$vo['id'])}">{$vo.title}</a></td>
+			<td><span>{:get_subdocument_count($vo['id'])}</span></td>
+			<td><span>{:get_document_type($vo['type'])}</span></td>
+			<td><span>{:get_cate($vo['category_id'])}</span></td>
+			<td>{$vo.level}</td>
+			<td><span>{$vo.update_time|time_format}</span></td>
+			<td>{$vo.view}</td>
+			<td>{$vo.status_text}</td>
+			<td><a href="{:U('Article/edit?cate_id='.$vo['category_id'].'&id='.$vo['id'])}">编辑</a>
+				<a href="{:U('Article/setStatus?ids='.$vo['id'].'&status='.abs(1-$vo['status']))}" class="ajax-get">{$vo.status|show_status_op}</a>
+				<a href="{:U('Article/setStatus?status=-1&ids='.$vo['id'])}" class="confirm ajax-get">删除</a>
+                </td>
+		</tr>
+		</volist>
+	</tbody>
+    </table> 
+
+        
+	</div>
+
+	<!-- 分页 -->
+    <div class="page">
+        {$_page}
+    </div>
 </div>
 
 </block>
@@ -119,8 +116,8 @@ $(function(){
 	//搜索功能
 	$("#search").click(function(){
 		var url = $(this).attr('url');
-		var status = $("#sch-sort-txt").val();
-        var query  = $('.search-form').find('input,select').serialize();
+		var status = $("#sch-sort-txt").attr("data");
+        var query  = $('.search-form').find('input').serialize();
         query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
         query = query.replace(/^&/g,'');
 		if(status != ''){

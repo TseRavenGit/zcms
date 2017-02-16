@@ -21,14 +21,14 @@
 					<label class="item-label">允许的附件类型：</label>
 					<div class="controls">
 						<label class="radio">
-							<input type="text" name="addons[ATTACHMENT_DEFAULT][is_upload]" class="input" value="{$data[ATTACHMENT_DEFAULT][is_upload]|default='1,2,3'}">
+							<input type="text" name="addons[ATTACHMENT_DEFAULT][is_upload]" class="text" value="{$data[ATTACHMENT_DEFAULT][is_upload]|default='1,2,3'}">
 						</label>
 					</div>
 				</div>
 				<div class="form-item">
 					<label class="item-label">驱动</label>
 					<div class="controls">
-						<input type="text" name="addons[ATTACHMENT_DEFAULT][driver_config]" class="input" value="{$data[ATTACHMENT_DEFAULT][driver_config]|default=''}">
+						<input type="text" name="addons[ATTACHMENT_DEFAULT][driver_config]" class="text" value="{$data[ATTACHMENT_DEFAULT][driver_config]|default=''}">
 					</div>
 				</div>
 			</fieldset>
@@ -37,21 +37,21 @@
 				<div class="form-item">
 					<label class="item-label">文件mime类型</label>
 					<div class="controls">
-						<input type="text" name="addons[ATTACHMENT_UPLOAD][mimes]" class="input" value="{$data[ATTACHMENT_UPLOAD][mimes]|default=''}">
+						<input type="text" name="addons[ATTACHMENT_UPLOAD][mimes]" class="text" value="{$data[ATTACHMENT_UPLOAD][mimes]|default=''}">
 						<span class="check-tips">不填无限制， 填写了多个以‘,’分割</span>
 					</div>
 				</div>
 				<div class="form-item">
 					<label class="item-label">文件大小上限</label>
 					<div class="controls">
-						<input type="text" name="addons[ATTACHMENT_UPLOAD][maxSize]" class="input" value="{$data[ATTACHMENT_UPLOAD][maxSize]|default=(5*1024*1024)}">
+						<input type="text" name="addons[ATTACHMENT_UPLOAD][maxSize]" class="text" value="{$data[ATTACHMENT_UPLOAD][maxSize]|default=(5*1024*1024)}">
 						<span class="check-tips">不填无限制， 填写了以字节byte为单位</span>
 					</div>
 				</div>
 				<div class="form-item">
 					<label class="item-label">允许上传的文件后缀</label>
 					<div class="controls">
-						<input type="text" name="addons[ATTACHMENT_UPLOAD][exts]" class="input" value="{$data[ATTACHMENT_UPLOAD][exts]|default=''}">
+						<input type="text" name="addons[ATTACHMENT_UPLOAD][exts]" class="text" value="{$data[ATTACHMENT_UPLOAD][exts]|default=''}">
 					</div>
 				</div>
 				<div class="form-item">
@@ -68,33 +68,33 @@
 				<div class="form-item">
 					<label class="item-label">子目录创建方式</label>
 					<div class="controls">
-						<label>函数名：<input type="text" name="addons[ATTACHMENT_UPLOAD][subName][fun]" class="input input-small" value="{$data[ATTACHMENT_UPLOAD][subName][fun]|default='date'}"></label>
-						<label>参数：<input type="text" name="addons[ATTACHMENT_UPLOAD][subName][param]" class="input input-small" value="{$data[ATTACHMENT_UPLOAD][subName][param]|default='Y-m-d'}"></label>
+						<label>函数名：<input type="text" name="addons[ATTACHMENT_UPLOAD][subName][fun]" class="text input-small" value="{$data[ATTACHMENT_UPLOAD][subName][fun]|default='date'}"></label>
+						<label>参数：<input type="text" name="addons[ATTACHMENT_UPLOAD][subName][param]" class="text input-small" value="{$data[ATTACHMENT_UPLOAD][subName][param]|default='Y-m-d'}"></label>
 					</div>
 				</div>
 				<div class="form-item">
 					<label class="item-label">保存根路径</label>
 					<div class="controls">
-						<input type="text" name="addons[ATTACHMENT_UPLOAD][rootPath]" class="input" value="{$data[ATTACHMENT_UPLOAD][rootPath]|default='./Uploads/Attachment/'}">
+						<input type="text" name="addons[ATTACHMENT_UPLOAD][rootPath]" class="text" value="{$data[ATTACHMENT_UPLOAD][rootPath]|default='./Uploads/Attachment/'}">
 					</div>
 				</div>
 				<div class="form-item">
 					<label class="item-label">保存路径</label>
 					<div class="controls">
-						<input type="text" name="addons[ATTACHMENT_UPLOAD][savePath]" class="input" value="{$data[ATTACHMENT_UPLOAD][savePath]}">
+						<input type="text" name="addons[ATTACHMENT_UPLOAD][savePath]" class="text" value="{$data[ATTACHMENT_UPLOAD][savePath]}">
 					</div>
 				</div>
 				<div class="form-item">
 					<label class="item-label">上传文件命名规则</label>
 					<div class="controls">
-						<label>函数名：<input type="text" name="addons[ATTACHMENT_UPLOAD][saveName][fun]" class="input input-small" value="{$data[ATTACHMENT_UPLOAD][saveName][fun]|default='uniqid'}"></label>
-						<label>参数：<input type="text" name="addons[ATTACHMENT_UPLOAD][saveName][param]" class="input input-small" value="{$data[ATTACHMENT_UPLOAD][saveName][param]|default=''}"></label>
+						<label>函数名：<input type="text" name="addons[ATTACHMENT_UPLOAD][saveName][fun]" class="text input-small" value="{$data[ATTACHMENT_UPLOAD][saveName][fun]|default='uniqid'}"></label>
+						<label>参数：<input type="text" name="addons[ATTACHMENT_UPLOAD][saveName][param]" class="text input-small" value="{$data[ATTACHMENT_UPLOAD][saveName][param]|default=''}"></label>
 					</div>
 				</div>
 				<div class="form-item">
 					<label class="item-label">文件保存后缀</label>
 					<div class="controls">
-						<input type="text" name="addons[ATTACHMENT_UPLOAD][saveExt]" class="input" value="{$data[ATTACHMENT_UPLOAD][saveExt]|default=''}">
+						<input type="text" name="addons[ATTACHMENT_UPLOAD][saveExt]" class="text" value="{$data[ATTACHMENT_UPLOAD][saveExt]|default=''}">
 						<span class="check-tips">空则使用原后缀</span>
 					</div>
 				</div>
@@ -115,7 +115,7 @@
 				<div class="form-item">
 					<label class="item-label">检测文件是否存在回调函数</label>
 					<div class="controls">
-						<input type="text" name="addons[ATTACHMENT_UPLOAD][callback]" class="input" value="{$data[ATTACHMENT_UPLOAD][callback]|default=''}">
+						<input type="text" name="addons[ATTACHMENT_UPLOAD][callback]" class="text" value="{$data[ATTACHMENT_UPLOAD][callback]|default=''}">
 						<span class="check-tips">检测文件是否存在回调函数，如果存在返回文件信息数组</span>
 					</div>
 				</div>

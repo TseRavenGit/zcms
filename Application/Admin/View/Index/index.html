@@ -1,8 +1,19 @@
 <extend name="Public/base"/>
 
+<block name="sidebar"></block>
+
+<block name="style">
+    <style>
+        body{padding: 0}
+    </style>
+</block>
+
 <block name="body">
     <!-- 主体 -->
-    {:hook('AdminIndex')}
+    <div id="indexMain" class="index-main">
+       <!-- 插件块 -->
+       <div class="container-span">{:hook('AdminIndex')}</div>
+    </div>
 </block>
 
 <block name="script">
@@ -13,6 +24,11 @@
             $(this).closest(".columns-mod").find(".bd").toggle();
             $(this).find("i").toggleClass("mod-up");
         });
+    })
+    $(function(){
+        // $('#main').attr({'id': 'indexMain','class': 'index-main'});
+        $('.copyright').html('<div class="copyright"> ©2013 <a href="http://www.topthink.net" target="_blank">topthink.net</a> 上海顶想信息科技有限公司版权所有</div>');
+        $('.sidebar').remove();
     })
 </script>
 </block>

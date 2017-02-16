@@ -376,7 +376,6 @@ function file_exists_case($filename) {
 function import($class, $baseUrl = '', $ext=EXT) {
     static $_file = array();
     $class = str_replace(array('.', '#'), array('/', '.'), $class);
-
     if (isset($_file[$class . $baseUrl]))
         return true;
     else
@@ -396,7 +395,7 @@ function import($class, $baseUrl = '', $ext=EXT) {
     }
     if (substr($baseUrl, -1) != '/')
         $baseUrl    .= '/';
-        $classfile   = $baseUrl . $class . $ext;
+    $classfile       = $baseUrl . $class . $ext;
     if (!class_exists(basename($class),false)) {
         // 如果类不存在 则导入类库文件
         return require_cache($classfile);
@@ -438,7 +437,6 @@ function load($name, $baseUrl='', $ext='.php') {
 function vendor($class, $baseUrl = '', $ext='.php') {
     if (empty($baseUrl))
         $baseUrl = VENDOR_PATH;
-
     return import($class, $baseUrl, $ext);
 }
 

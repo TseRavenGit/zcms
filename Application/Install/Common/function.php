@@ -1,7 +1,10 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 
 // 检测环境是否支持可写
@@ -217,27 +220,13 @@ function register_administrator($db, $prefix, $admin, $auth){
 	$db->execute($sql);
 
 	$sql = "INSERT INTO `[PREFIX]member` VALUES ".
-		   "('1', '[NAME]','','','0', '0', '', '0', '1', '0', '[TIME]', '0', '[TIME]', '1');";
+		   "('1', '[NAME]', '0', '0', '', '0', '1', '0', '[TIME]', '0', '[TIME]', '1');";
 	$sql = str_replace(
 		array('[PREFIX]', '[NAME]', '[TIME]'),
 		array($prefix, $admin['username'], NOW_TIME),
 		$sql);
 	$db->execute($sql);
 	show_msg('创始人帐号注册完成！');
-}
-
-function register_editor($db, $prefix, $auth){
-	show_msg('开始注册编辑帐号...');
-	$sql = "INSERT INTO `".$prefix."ucenter_member` VALUES " .
-		   "('2', 'editor', '".user_md5('editor', $auth)."', 'editor@qq.com', '', '".NOW_TIME."', '".get_client_ip(1)."', 0, 0, '".NOW_TIME."', '1')";
-	$db->execute($sql);
-	$sql = "INSERT INTO `".$prefix."member` VALUES ".
-		   "('2', 'editor','','','0', '0', '', '0', '1', '0', '".NOW_TIME."', '0', '".NOW_TIME."', '1');";
-	$db->execute($sql);
-	//编辑组授权
-	$sql = "INSERT INTO `".$prefix."auth_group_access` (`uid`, `group_id`) VALUES (2, 2);";
-	$db->execute($sql);
-	show_msg('编辑帐号注册完成！');
 }
 
 /**
@@ -252,7 +241,7 @@ function show_msg($msg, $class = ''){
 
 /**
  * 生成系统AUTH_KEY
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 function build_auth_key(){
 	$chars  = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';

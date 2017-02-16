@@ -23,33 +23,33 @@
 	<!-- 表单 -->
 	<form id="form" action="{:U('build')}" method="post" class="form-horizontal doc-modal-form">
 		<div class="form-item">
-			<label class="item-label"><span class="must">*</span>标识名 <span class="check-tips">请输入插件标识</span></label>
+			<label class="item-label"><span class="must">*</span>标识名 <span class="check-tips">（请输入插件标识）</span></label>
 			<div class="controls">
-				<input type="text" class="input input-large" name="info[name]" value="Example">
+				<input type="text" class="text input-large" name="info[name]" value="Example">
 			</div>
 		</div>
 		<div class="form-item">
-			<label class="item-label">插件名<span class="check-tips">请输入插件名</span></label>
+			<label class="item-label">插件名<span class="check-tips">（请输入插件名）</span></label>
 			<div class="controls">
-				<input type="text" class="input input-large" name="info[title]" value="示列">
+				<input type="text" class="text input-large" name="info[title]" value="示列">
 			</div>
 		</div>
 		<div class="form-item">
-			<label class="item-label">版本<span class="check-tips">请输入插件版本</span></label>
+			<label class="item-label">版本<span class="check-tips">（请输入插件版本）</span></label>
 			<div class="controls">
-				<input type="text" class="input input-large" name="info[version]" value="0.1">
+				<input type="text" class="text input-large" name="info[version]" value="0.1">
 			</div>
 		</div>
 		<div class="form-item">
-			<label class="item-label">作者<span class="check-tips">请输入插件作者</span></label>
+			<label class="item-label">作者<span class="check-tips">（请输入插件作者）</span></label>
 			<div class="controls">
-				<input type="text" class="input input-large" name="info[author]" value="无名">
+				<input type="text" class="text input-large" name="info[author]" value="无名">
 			</div>
 		</div>
 		<div class="form-item">
-			<label class="item-label">描述<span class="check-tips">请输入描述</span></label>
+			<label class="item-label">描述<span class="check-tips">（请输入描述）</span></label>
 			<div class="controls">
-				<label class="inputarea input-large">
+				<label class="textarea input-large">
 					<textarea name="info[description]">这是一个临时描述</textarea>
 				</label>
 			</div>
@@ -66,8 +66,8 @@
 			<label class="item-label">是否需要配置</label>
 			<div class="controls">
 				<label class="checkbox"><input type="checkbox" id="has_config" name="has_config" value="1" /></label>
-				<label class="inputarea input-large has_config hidden">
-					<textarea class="inputarea" name="config">
+				<label class="textarea input-large has_config hidden">
+					<textarea class="textarea" name="config">
 &lt;?php
 return array(
 	'random'=>array(//配置在表单中的键名 ,这个会是config[random]
@@ -82,7 +82,7 @@ return array(
 );
 					</textarea>
 				</label>
-				<input type="text" class="input input-large has_config hidden" name="custom_config">
+				<input type="text" class="text input-large has_config hidden" name="custom_config">
 				<span class="check-tips has_config hidden">自定义模板,注意：自定义模板里的表单name必须为config[name]这种，获取保存后配置的值用$data.config.name</span>
 			</div>
 		</div>
@@ -108,7 +108,7 @@ return array(
 				<label class="checkbox">
 					<input type="checkbox" id="has_adminlist" name="has_adminlist" value="1" />勾选，扩展里已装插件后台列表会出现插件名的列表菜单，如系统的附件
 				</label>
-				<label class="inputarea input-large has_adminlist hidden">
+				<label class="textarea input-large has_adminlist hidden">
 					<textarea name="admin_list">
 'model'=>'Example',		//要查的表
 			'fields'=>'*',			//要查的字段
@@ -119,13 +119,13 @@ return array(
 			),
 					</textarea>
 				</label>
-				<input type="text" class="input has_adminlist hidden" name="custom_adminlist">
+				<input type="text" class="text has_adminlist hidden" name="custom_adminlist">
 				<span class="check-tips block has_adminlist hidden">自定义模板,注意：自定义模板里的列表变量为$_list这种,遍历后可以用listkey可以控制表头显示,也可以完全手写，分页变量用$_page</span>
 			</div>
 		</div>
 		<div class="form-item">
 			<button class="btn btn-return" type="button" id="preview">预 览</button>
-			<button class="btn J_ajax_post_custom submit-btn" target-form="form-horizontal" id="submit">确 定</button>
+			<button class="btn ajax-post_custom submit-btn" target-form="form-horizontal" id="submit">确 定</button>
 			<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
 		</div>
 	</form>
@@ -187,7 +187,7 @@ return array(
 			return false;
 		});
 
-		$('.J_ajax_post_custom').click(function(){
+		$('.ajax-post_custom').click(function(){
 	        var target,query,form;
 	        var target_form = $(this).attr('target-form');
 	        var check_url = '{:U('checkForm')}';
@@ -237,5 +237,7 @@ return array(
 	        return false;
 	    });
 
+	    //导航高亮
+	    highlight_subnav('{:U('Addons/index')}');
 	</script>
 </block>

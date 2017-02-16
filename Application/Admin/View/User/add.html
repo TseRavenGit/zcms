@@ -1,44 +1,44 @@
-<extend name="Public/base" />
+<extend name="Public/base"/>
 
 <block name="body">
-    <!-- 标题栏 -->
+    <div class="main-title">
+        <h2>新增用户</h2>
+    </div>
+    <form action="{:U()}" method="post" class="form-horizontal">
+        <div class="form-item">
+            <label class="item-label">用户名<span class="check-tips">（用户名会作为默认的昵称）</span></label>
+            <div class="controls">
+                <input type="text" class="text input-large" name="username" value="">
+            </div>
+        </div>
+        <div class="form-item">
+            <label class="item-label">密码<span class="check-tips">（用户密码不能少于6位）</span></label>
+            <div class="controls">
+                <input type="password" class="text input-large" name="password" value="">
+            </div>
+        </div>
+        <div class="form-item">
+            <label class="item-label">确认密码</label>
+            <div class="controls">
+                <input type="password" class="text input-large" name="repassword" value="">
+            </div>
+        </div>
+        <div class="form-item">
+            <label class="item-label">邮箱<span class="check-tips">（用户邮箱，用于找回密码等安全操作）</span></label>
+            <div class="controls">
+                <input type="text" class="text input-large" name="email" value="">
+            </div>
+        </div>
+        <div class="form-item">
+            <button class="btn submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">确 定</button>
+            <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+        </div>
+    </form>
+</block>
 
-        <div class="g-wrap tab-wrap">
-        <div class="u-tab">
-            <ul class="cc tab-nav">
-                <li data-tab="tab1" class="current"><a href="javascript:void(0);">新增用户</a></li>
-            </ul>
-        </div>
-        <div class="common-form tab-content">
-            <form action="{:U()}" method="post" class="form-horizontal">
-                <div id="tab1" class="tab-pane in tab1 table_list">
-                    <table width="100%">
-                    <tbody>
-                        <tr>
-                          <td width="12%"><label class="item-label">用户名:</label></td>
-                          <td width="88%"><input type="text" class="input input-large" name="username" value=""></td>
-                        </tr>
-                        <tr>
-                          <td width="12%">密码:</td>
-                          <td width="88%"><input type="password" class="input input-large" name="password" value=""></td>
-                        </tr>
-                        <tr>
-                          <td width="12%">确认密码:</td>
-                          <td width="88%"><input type="password" class="input input-large" name="repassword" value=""></td>
-                        </tr>
-                        <tr>
-                          <td width="12%">邮箱</td>
-                          <td width="88%"><input type="text" class="input input-large" name="email" value=""></td>
-                        </tr>
-                    </tbody>
-                    </table>
-                </div>
-                <div class="btn_wrap">
-                  <div class="btn_wrap_pd">
-                        <button class="btn submit-btn J_ajax_post" id="submit" type="submit" target-form="form-horizontal">确 定</button>
-                        <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
-                  </div>
-                </div>
-            </form>
-        </div>
+<block name="script">
+    <script type="text/javascript">
+        //导航高亮
+        highlight_subnav('{:U('User/index')}');
+    </script>
 </block>

@@ -1,7 +1,10 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 
 namespace Admin\Logic;
@@ -67,4 +70,9 @@ abstract class BaseLogic extends Model{
 	 */
 	abstract public function update($id = 0);
 
+	/**
+	 * 保存为草稿
+	 * @author huajie <banhuajie@163.com>
+	 */
+	abstract public function autoSave($id = 0);
 }

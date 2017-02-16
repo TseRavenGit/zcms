@@ -1,7 +1,10 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 
 namespace Home\Model;
@@ -34,7 +37,7 @@ class CategoryModel extends Model{
 	 * @param  milit   $id 分类ID或标识
 	 * @param  boolean $field 查询字段
 	 * @return array     分类信息
-	 * @author Jroy
+	 * @author 麦当苗儿 <zuojiazi@vip.qq.com>
 	 */
 	public function info($id, $field = true){
 		/* 获取分类信息 */
@@ -52,7 +55,7 @@ class CategoryModel extends Model{
 	 * @param  integer $id    分类ID
 	 * @param  boolean $field 查询字段
 	 * @return array          分类树
-	 * @author Jroy
+	 * @author 麦当苗儿 <zuojiazi@vip.qq.com>
 	 */
 	public function getTree($id = 0, $field = true){
 		/* 获取当前分类信息 */
@@ -81,33 +84,18 @@ class CategoryModel extends Model{
 	 * @param  integer $id    分类ID
 	 * @param  boolean $field 查询字段
 	 * @return array
-	 * @author Jroy         
+	 * @author 麦当苗儿 <zuojiazi@vip.qq.com>         
 	 */
 	public function getSameLevel($id, $field = true){
 		$info = $this->info($id, 'pid');
-		$pid = (strpos($id, '0')>-1)?0:$info['pid'];
-		$map = array('pid' => $pid, 'status' => 1,'display' => 1);
-		$cate = $this->field($field)->where($map)->order('sort asc,id asc')->select();
-
-		//产品导航
-		$cate_product = M('ShopCatalog')->field('id,pid,title,url,model')->where('nav=1')->order('sort asc,id asc')->select();
-		if($cate_product && $cate){
-			$cate = array_merge($cate,$cate_product);
-		}elseif($cate_product && !$cate){
-			$cate = $cate_product;
-		}
-
-		foreach ($cate as $k=>$v) {
-			$cate[$k]['url'] = get_cate_url($v['id']);
-		}
-
-		return $cate;
+		$map = array('pid' => $info['pid'], 'status' => 1);
+		return $this->field($field)->where($map)->order('sort')->select();
 	}
 
 	/**
 	 * 更新分类信息
 	 * @return boolean 更新状态
-	 * @author Jroy
+	 * @author 麦当苗儿 <zuojiazi@vip.qq.com>
 	 */
 	public function update(){
 		$data = $this->create();
@@ -123,7 +111,7 @@ class CategoryModel extends Model{
 	 * 获取指定分类子分类ID
 	 * @param  string $cate 分类ID
 	 * @return string       id列表
-	 * @author Jroy
+	 * @author 麦当苗儿 <zuojiazi@vip.qq.com>
 	 */
 	public function getChildrenId($cate){
 		$field = 'id,name,pid,title,link_id';
@@ -136,32 +124,21 @@ class CategoryModel extends Model{
 	}
 
 	/**
-	 * 获取指定分类父分类ID
-	 * @param  string $cate 分类ID
-	 * @return string       id列表
-	 * @author Jroy
-	 */
-	public function getCrumb($cate){
-		$field = 'id,title,url,pid';
-
-		while ($cate!=0) {
-			$info = get_parent_pid($cate);
-			$cate = $info['pid'];
-			$crumb[] = $info;
-		}
-
-		foreach ($crumb as $k=>$v) {
-			$crumb[$k]['url'] = get_cate_url($v['id']);
-		}
-		return $crumb;
-	}
-
-	/**
 	 * 查询后解析扩展信息
 	 * @param  array $data 分类数据
-	 * @author Jroy
+	 * @author 麦当苗儿 <zuojiazi@vip.qq.com>
 	 */
 	protected function _after_find(&$data, $options){
+		/* 分割模型 */
+        if(!empty($data['model'])){
+            $data['model'] = explode(',', $data['model']);
+        }
+
+        /* 分割文档类型 */
+        if(!empty($data['type'])){
+            $data['type'] = explode(',', $data['type']);
+        }
+
         /* 分割模型 */
         if(!empty($data['reply_model'])){
             $data['reply_model'] = explode(',', $data['reply_model']);

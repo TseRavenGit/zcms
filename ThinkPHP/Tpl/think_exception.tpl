@@ -34,7 +34,7 @@ h1{ font-size: 32px; line-height: 48px; }
 		<div class="title">
 			<h3>错误位置</h3>
 		</div>
-		<div class="input">
+		<div class="text">
 			<p>FILE: <?php echo $e['file'] ;?> &#12288;LINE: <?php echo $e['line'];?></p>
 		</div>
 	</div>
@@ -44,7 +44,7 @@ h1{ font-size: 32px; line-height: 48px; }
 		<div class="title">
 			<h3>TRACE</h3>
 		</div>
-		<div class="input">
+		<div class="text">
 			<p><?php echo nl2br($e['trace']);?></p>
 		</div>
 	</div>

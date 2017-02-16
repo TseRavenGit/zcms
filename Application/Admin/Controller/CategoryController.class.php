@@ -1,32 +1,36 @@
 <?php
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 
 namespace Admin\Controller;
 
 /**
  * 后台分类管理控制器
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 class CategoryController extends AdminController {
 
     /**
      * 分类管理列表
-     * @author Jroy
+     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
     public function index(){
-        $tree = D('Category')->getLevelTree();
-
-        $this->meta_title = '栏目管理';
-        $this->assign("category", $tree);
+        $tree = D('Category')->getTree(0,'id,name,title,sort,pid,allow_publish,status');
+        $this->assign('tree', $tree);
+        C('_SYS_GET_CATEGORY_TREE_', true); //标记系统获取分类树模板
+        $this->meta_title = '分类管理';
         $this->display();
     }
 
     /**
      * 显示分类树，仅支持内部调
      * @param  array $tree 分类树
-     * @author Jroy
+     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
     public function tree($tree = null){
         C('_SYS_GET_CATEGORY_TREE_') || $this->_empty();
@@ -35,7 +39,7 @@ class CategoryController extends AdminController {
     }
 
     /* 编辑分类 */
-    public function edit($id = null){
+    public function edit($id = null, $pid = 0){
         $Category = D('Category');
 
         if(IS_POST){ //提交表单
@@ -47,24 +51,17 @@ class CategoryController extends AdminController {
             }
         } else {
             $cate = '';
-            $pid = $this->getPid($id);
             if($pid){
+                /* 获取上级分类信息 */
                 $cate = $Category->info($pid, 'id,name,title,status');
                 if(!($cate && 1 == $cate['status'])){
                     $this->error('指定的上级分类不存在或被禁用！');
                 }
             }
-            /* 获取分类信息 */
-            $info = $id ? $Category->info($id) : '';
-            if($pid){
-                session('admin_category_id',$pid);
-            }else{
-                session('admin_category_id',0);
-            }
-            $catetree = D('Category')->getCategory();
 
             /* 获取分类信息 */
-            $this->assign('catetree',$catetree);
+            $info = $id ? $Category->info($id) : '';
+
             $this->assign('info',       $info);
             $this->assign('category',   $cate);
             $this->meta_title = '编辑分类';
@@ -91,13 +88,9 @@ class CategoryController extends AdminController {
                 if(!($cate && 1 == $cate['status'])){
                     $this->error('指定的上级分类不存在或被禁用！');
                 }
-            }else{
-                session('admin_category_id',null);
             }
-            $catetree = D('Category')->getCategory();
 
             /* 获取分类信息 */
-            $this->assign('catetree',$catetree);
             $this->assign('category', $cate);
             $this->meta_title = '新增分类';
             $this->display('edit');
@@ -128,9 +121,6 @@ class CategoryController extends AdminController {
 
         //删除该分类信息
         $res = M('Category')->delete($cate_id);
-        //删除url信息
-        M('Url')->where("cid=$cate_id")->delete();
-
         if($res !== false){
             //记录行为
             action_log('update_category', 'category', $cate_id, UID);
@@ -223,21 +213,5 @@ class CategoryController extends AdminController {
             $this->error('合并分类失败！');
         }
 
-    }
-
-    public function setOrder()
-    {
-        $order = I('post.listorders');
-        foreach ($order as $k => $v) {
-            $data['sort'] = $v;
-            D('Category')->where('id='.$k)->save($data);
-        }
-        $this->success('排序完成');
-    }
-
-    public function getPid($cid)
-    {
-        $pid = D('Category')->info($cid,array('id,pid'));
-        return $pid['pid'];
     }
 }

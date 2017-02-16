@@ -1,7 +1,10 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 
 namespace Admin\Controller;
@@ -9,13 +12,13 @@ use User\Api\UserApi;
 
 /**
  * 后台用户控制器
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 class UserController extends AdminController {
 
     /**
      * 用户管理首页
-     * @author Jroy
+     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
     public function index(){
         $nickname       =   I('nickname');
@@ -203,8 +206,9 @@ class UserController extends AdminController {
             if($password != $repassword){
                 $this->error('密码和重复密码不一致！');
             }
+
             /* 调用注册接口注册用户 */
-            $User   =   new UserApi();
+            $User   =   new UserApi;
             $uid    =   $User->register($username, $password, $email);
             if(0 < $uid){ //注册成功
                 $user = array('uid' => $uid, 'nickname' => $username, 'status' => 1);

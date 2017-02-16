@@ -1,5 +1,8 @@
 <?php
-
+// +----------------------------------------------------------------------
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Author: huajie <banhuajie@163.com>
 // +----------------------------------------------------------------------
@@ -21,6 +24,7 @@ class ModelController extends AdminController {
      *      返回false则表示当前访问无权限
      *      返回null，则会进入checkRule根据节点授权判断权限
      *
+     * @author 朱亚杰  <xcoolcc@gmail.com>
      */
     protected function checkDynamic(){
         if(IS_ROOT){
@@ -32,8 +36,7 @@ class ModelController extends AdminController {
         //$AUTH_GROUP = D('AuthGroup');
         // $AUTH_GROUP->checkModelId($mid);      //检查模型id列表是否全部存在
         // AuthGroupModel::getModelOfGroup($gid);//获取某个用户组拥有权限的模型id
-        $model = new AuthGroupModel;
-        $model_ids = $model->getGroups(UID);
+        $model_ids = AuthGroupModel::getAuthModels(UID);
         $id        = I('id');
         switch(strtolower(ACTION_NAME)){
             case 'edit':    //编辑
@@ -141,7 +144,6 @@ class ModelController extends AdminController {
         $this->assign('fields', $fields);
         $this->assign('info', $data);
         $this->meta_title = '编辑模型';
-        Cookie('__forward__',$_SERVER['REQUEST_URI']);
         $this->display();
     }
 

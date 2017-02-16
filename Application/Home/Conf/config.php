@@ -1,7 +1,10 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: Jroy <http://www.thinkphp.cn>
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.thinkphp.cn>
 // +----------------------------------------------------------------------
 
 /**
@@ -11,13 +14,13 @@
 return array(
 
     // 预先加载的标签库
-    //'TAGLIB_PRE_LOAD'     =>    'OT\\TagLib\\Article,OT\\TagLib\\Think',
+    'TAGLIB_PRE_LOAD'     =>    'OT\\TagLib\\Article,OT\\TagLib\\Think',
         
     /* 主题设置 */
     'DEFAULT_THEME' =>  'default',  // 默认模板主题名称
 
     /* 数据缓存设置 */
-    'DATA_CACHE_PREFIX' => 'zcms_', // 缓存前缀
+    'DATA_CACHE_PREFIX' => 'onethink_', // 缓存前缀
     'DATA_CACHE_TYPE'   => 'File', // 数据缓存类型
 
     /* 文件上传相关配置 */
@@ -62,8 +65,8 @@ return array(
     ),
 
     /* SESSION 和 COOKIE 配置 */
-    'SESSION_PREFIX' => 'home', //session前缀
-    'COOKIE_PREFIX'  => 'home_', // Cookie前缀 避免冲突
+    'SESSION_PREFIX' => 'onethink_home', //session前缀
+    'COOKIE_PREFIX'  => 'onethink_home_', // Cookie前缀 避免冲突
 
     /**
      * 附件相关配置
@@ -91,12 +94,5 @@ return array(
         'hash'     => true, //是否生成hash编码
         'callback' => false, //检测文件是否存在回调函数，如果存在返回文件信息数组
     ), //附件上传配置（文件上传类配置）
-    'URL_MODEL'             =>  2,       // URL访问模式,可选参数0、1、2、3,代表以下四种模式：
-    // 0 (普通模式); 1 (PATHINFO 模式); 2 (REWRITE  模式); 3 (兼容模式)  默认为PATHINFO 模式
-    'URL_HTML_SUFFIX'       =>  '.html',  // URL伪静态后缀设置
 
-    //是否开启表单令牌
-    /*'TOKEN_ON'=>true,  // 是否开启令牌验证   
-    'TOKEN_NAME'=>'__hash__',    // 令牌验证的表单隐藏字段名称   
-    'TOKEN_TYPE'=>'md5',  //令牌哈希验证规则 默认为MD5  */
 );

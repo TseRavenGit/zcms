@@ -1,7 +1,10 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 
 namespace Install\Controller;
@@ -17,7 +20,7 @@ class InstallController extends Controller{
 		}
 
 		if(Storage::has(MODULE_PATH . 'Data/install.lock')){
-			$this->error('已经成功安装了Zcms，请不要重复安装!');
+			$this->error('已经成功安装了OneThink，请不要重复安装!');
 		}
 	}
 
@@ -36,6 +39,7 @@ class InstallController extends Controller{
 
 		//函数检测
 		$func = check_func();
+
 		session('step', 1);
 
 		$this->assign('env', $env);
@@ -77,13 +81,16 @@ class InstallController extends Controller{
 				$db->execute($sql) || $this->error($db->getError());
 			}
 
-			session('step',3);
 			//跳转到数据库安装页面
 			$this->redirect('step3');
 		} else {
 
 			session('error') && $this->error('环境检测没有通过，请调整环境后重试！');
+
 			$step = session('step');
+			if($step != 1 && $step != 2){
+				$this->redirect('step1');
+			}
 
 			session('step', 2);
 			$this->display();
@@ -92,7 +99,7 @@ class InstallController extends Controller{
 
 	//安装第三步，安装数据表，创建配置文件
 	public function step3(){
-		if(session('step') != 3){
+		if(session('step') != 2){
 			$this->redirect('step2');
 		}
 
@@ -109,9 +116,6 @@ class InstallController extends Controller{
 		$auth  = build_auth_key();
 		$admin = session('admin_info');
 		register_administrator($db, $dbconfig['DB_PREFIX'], $admin, $auth);
-
-		//创建初始编辑号
-		register_editor($db, $dbconfig['DB_PREFIX'], $auth);
 
 		//创建配置文件
 		$conf 	=	write_config($dbconfig, $auth);

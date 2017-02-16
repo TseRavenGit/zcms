@@ -1,5 +1,8 @@
 <?php
-
+// +----------------------------------------------------------------------
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Author: huajie <banhuajie@163.com>
 // +----------------------------------------------------------------------
@@ -357,9 +360,11 @@ class ArticleController extends AdminController {
      * @author huajie <banhuajie@163.com>
      */
     public function add(){
-        $cate_id    =   I('get.cate_id')?I('get.cate_id'):session('admin_category_id');
-        $model_id   =   I('get.model_id')?I('get.model_id'):session('admin_article_mid');
+        //获取左边菜单
+        $this->getMenu();
 
+        $cate_id    =   I('get.cate_id',0);
+        $model_id   =   I('get.model_id',0);
 
         empty($cate_id) && $this->error('参数不能为空！');
         empty($model_id) && $this->error('该分类未绑定模型！');
@@ -375,7 +380,6 @@ class ArticleController extends AdminController {
         $info['pid']            =   $_GET['pid']?$_GET['pid']:0;
         $info['model_id']       =   $model_id;
         $info['category_id']    =   $cate_id;
-
         if($info['pid']){
             // 获取上级文档
             $article            =   M('Document')->field('id,title,type')->find($info['pid']);
@@ -441,7 +445,7 @@ class ArticleController extends AdminController {
      * @author huajie <banhuajie@163.com>
      */
     public function update(){
-        $res = D('Document')->update(I('post.'));
+        $res = D('Document')->update();
         if(!$res){
             $this->error(D('Document')->getError());
         }else{
@@ -543,25 +547,18 @@ class ArticleController extends AdminController {
      * @author huajie <banhuajie@163.com>
      */
     public function recycle(){
-        $cid = I('get.cate_id');
-        if(!I('get.menuId')){
-            if(strcmp($cid, 0) != 0){
-                if(!$cid){
-                    $cid = session('admin_category_id');
-                    $mid = session('admin_article_mid');
-                }else{
-                    session('admin_category_id',$cid);
-                    session('admin_article_mid',$mid);
-                }
-            }
-        }else{
-            session('admin_category_id',null);
-        }
-        if($cid && $cid>0){
-            $map['category_id'] = $cid;
-        }
+        //获取左边菜单
+        $this->getMenu();
 
         $map['status']  =   -1;
+        if ( !IS_ROOT ) {
+            $cate_auth  =   AuthGroupModel::getAuthCategories(UID);
+            if($cate_auth){
+                $map['category_id']    =   array('IN',$cate_auth);
+            }else{
+                $map['category_id']    =   -1;
+            }
+        }
         $list = $this->lists(M('Document'),$map,'update_time desc');
 
         //处理列表数据
@@ -571,8 +568,6 @@ class ArticleController extends AdminController {
             }
         }
 
-        $category = D('Category')->getCategory();
-        $this->assign('category',$category);
         $this->assign('list', $list);
         $this->meta_title       =   '回收站';
         $this->display();
@@ -617,28 +612,13 @@ class ArticleController extends AdminController {
      * 我的文档
      * @author huajie <banhuajie@163.com>
      */
-    public function mydocument($status = null, $title = null,$showids = false){
-        $cid = I('get.cate_id');
-        $mid = I('get.model_id');
+    public function mydocument($status = null, $title = null){
+        //获取左边菜单
+        $this->getMenu();
 
-        if(!I('get.menuId')){
-            if(strcmp($cid, 0) != 0){
-                if(!$cid){
-                    $cid = session('admin_category_id');
-                    $mid = session('admin_article_mid');
-                }else{
-                    session('admin_category_id',$cid);
-                    session('admin_article_mid',$mid);
-                }
-            }
-        }else{
-            session('admin_category_id',null);
-        }
-        if($cid){
-            $map['category_id'] = $cid;
-        }
         $Document   =   D('Document');
         /* 查询条件初始化 */
+        $map['uid'] = UID;
         if(isset($title)){
             $map['title']   =   array('like', '%'.$title.'%');
         }
@@ -653,21 +633,16 @@ class ArticleController extends AdminController {
         if ( isset($_GET['time-end']) ) {
             $map['update_time'][] = array('elt',24*60*60 + strtotime(I('time-end')));
         }
-        $category = D('Category')->getCategory();
+        //只查询pid为0的文章
+        $map['pid'] = 0;
         $list = $this->lists($Document,$map,'update_time desc');
-
         int_to_string($list);
         // 记录当前列表页的cookie
+        Cookie('__forward__',$_SERVER['REQUEST_URI']);
         $this->assign('status', $status);
         $this->assign('list', $list);
-        $this->assign('category',$category);
         $this->meta_title = '我的文档';
-        if(!$showids){
-            Cookie('__forward__',$_SERVER['REQUEST_URI']);
-            $this->display();
-        }else{
-            $this->display('showids');
-        }
+        $this->display();
     }
 
     /**
@@ -713,36 +688,11 @@ class ArticleController extends AdminController {
         if(empty($_POST['ids'])) {
             $this->error('请选择要移动的文档！');
         }
-        session('admin_moveArticle', $_POST['ids']);
+        session('moveArticle', $_POST['ids']);
         session('copyArticle', null);
-        $this->success('请选择要移动到的分类！',U('article/moveto'));
+        $this->success('请选择要移动到的分类！');
     }
 
-    public function moveto(){
-        $ids = session('admin_moveArticle');
-        if(IS_POST){
-            $category_id = I('post.category_id');
-            if(!$category_id){
-                $this->error('请选择要移动到的分类！');
-            }
-            $ids = implode(',', $ids);
-            $map['id'] = array('in',$ids);
-            $data['category_id'] = $category_id;
-
-            $res = M('Document')->where($map)->save($data);
-
-
-            if($res !== false){
-                $this->success('移动成功',U('article/mydocument'));
-            }else{
-                $this->error('移动失败');
-            }
-        }else{  
-            $catetree = D('Category')->getCategory();
-            $this->assign('category',$catetree);
-            $this->display();
-        }
-    }
     /**
      * 拷贝文档
      * @author huajie <banhuajie@163.com>
@@ -883,7 +833,7 @@ class ArticleController extends AdminController {
 
     /**
      * 文档排序
-     * @author jroy
+     * @author huajie <banhuajie@163.com>
      */
     public function sort(){
         if(IS_GET){
@@ -926,5 +876,4 @@ class ArticleController extends AdminController {
             $this->error('非法请求！');
         }
     }
-
 }

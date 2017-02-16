@@ -1,5 +1,8 @@
 <?php
-
+// +----------------------------------------------------------------------
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Author: huajie <banhuajie@163.com>
 // +----------------------------------------------------------------------
@@ -132,11 +135,7 @@ class ModelModel extends Model{
      */
     public function del($id){
     	//获取表名
-    	$model = $this->field('name,issystem')->find($id);
-        if($model['issystem']==1){
-            $this->error = '系统模型，禁止删除！';
-            return false;
-        }
+    	$model = $this->field('name')->find($id);
     	$table_name = C('DB_PREFIX').strtolower($model['name']);
     	//删除属性数据
     	M('Attribute')->where(array('model_id'=>$id))->delete();
@@ -148,14 +147,5 @@ class ModelModel extends Model{
 sql;
     	$res = M()->execute($sql);
     	return $res !== false;
-    }
-
-    /*
-    *获取一个model的中文名称
-    **/
-    public function getModelName($id)
-    {
-        $model = $this->field('title')->find($id);
-        return $model['title'];
     }
 }

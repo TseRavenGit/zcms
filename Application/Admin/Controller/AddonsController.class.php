@@ -1,5 +1,8 @@
 <?php
-
+// +----------------------------------------------------------------------
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Author: yangweijie <yangweijiester@gmail.com> <code-tech.diandian.com>
 // +----------------------------------------------------------------------
@@ -21,7 +24,7 @@ class AddonsController extends AdminController {
 
     //创建向导首页
     public function create(){
-        if(!is_writable(ZCMS_ADDON_PATH))
+        if(!is_writable(ONETHINK_ADDON_PATH))
             $this->error('您没有创建目录写入权限，无法使用此功能');
 
         $hooks = M('Hooks')->field('name,description')->select();
@@ -124,7 +127,7 @@ str;
         if(!$data['info']['name'])
             $this->error('插件标识必须');
         //检测插件名是否合法
-        $addons_dir             =   ZCMS_ADDON_PATH;
+        $addons_dir             =   ONETHINK_ADDON_PATH;
         if(file_exists("{$addons_dir}{$data['info']['name']}")){
             $this->error('插件已经存在了');
         }
@@ -135,7 +138,7 @@ str;
         $data                   =   $_POST;
         $data['info']['name']   =   trim($data['info']['name']);
         $addonFile              =   $this->preview(false);
-        $addons_dir             =   ZCMS_ADDON_PATH;
+        $addons_dir             =   ONETHINK_ADDON_PATH;
         //创建目录结构
         $files          =   array();
         $addon_dir      =   "$addons_dir{$data['info']['name']}/";

@@ -1,17 +1,22 @@
 <extend name="Public/base"/>
 
 <block name="body">
-    <div class="g-wrap">
-        <!-- 按钮工具栏 -->
-        <div class="u-tab">
-            <ul class="cc">
-              <li class="current"><a href="javascript:;">数据备份</a></li>
-            </ul>
-        </div>
-        <!-- 数据表格 -->
-        <div class="table_list">
+    <!-- 标题栏 -->
+    <div class="main-title">
+        <h2>数据备份</h2>
+    </div>
+    <!-- /标题栏 -->
+
+    <div class="cf">
+        <a id="export" class="btn" href="javascript:;" autocomplete="off">立即备份</a>
+        <a id="optimize" class="btn" href="{:U('optimize')}">优化表</a>
+        <a id="repair" class="btn" href="{:U('repair')}">修复表</a>
+    </div>
+
+    <!-- 应用列表 -->
+    <div class="data-table table-striped">
         <form id="export-form" method="post" action="{:U('export')}">
-            <table width="100%">
+            <table>
                 <thead>
                     <tr>
                         <th width="48"><input class="check-all" checked="chedked" type="checkbox" value=""></th>
@@ -35,30 +40,16 @@
                             <td>{$table.create_time}</td>
                             <td class="info">未备份</td>
                             <td class="action">
-                                <a class="J_ajax_get no-refresh" href="{:U('optimize?tables='.$table['name'])}">优化表</a>&nbsp;
-                                <a class="J_ajax_get no-refresh" href="{:U('repair?tables='.$table['name'])}">修复表</a>
+                                <a class="ajax-get no-refresh" href="{:U('optimize?tables='.$table['name'])}">优化表</a>&nbsp;
+                                <a class="ajax-get no-refresh" href="{:U('repair?tables='.$table['name'])}">修复表</a>
                             </td>
                         </tr>
                     </volist>
                 </tbody>
             </table>
-        </form> 
-        </div>
-        <div class="btn_wrap">
-            <div class="btn_wrap_pd">
-            <a class="btn btn_small J_ajax_get" href="{:U('Admin/Index/setKey',array('cid'=>$_GET['menuId'],'title'=>$meta_title))}"><i class="fa fa-heart"></i></a>
-            <a id="export" class="btn btn_submit" href="javascript:;" autocomplete="off">立即备份</a>
-            <a id="optimize" class="btn btn_submit" href="{:U('optimize')}">优化表</a>
-            <a id="repair" class="btn btn_submit" href="{:U('repair')}">修复表</a>
-            </div>
-        </div>
-        <!-- 分页 -->
-        <div class="page">
-            {$_page}
-        </div>
+        </form>
     </div>
-</div>
-
+    <!-- /应用列表 -->
 </block>
 
 <block name="script">
@@ -75,9 +66,9 @@
                     updateAlert(data.info,'alert-error');
                 }
                 setTimeout(function(){
-                    $('#top-alert').find('button').click();
-                    $(that).removeClass('disabled').prop('disabled',false);
-                },1500);
+	                $('#top-alert').find('button').click();
+	                $(that).removeClass('disabled').prop('disabled',false);
+	            },1500);
             }, "json");
             return false;
         });
@@ -99,9 +90,9 @@
                         $export.parent().children().removeClass("disabled");
                         $export.html("立即备份");
                         setTimeout(function(){
-                            $('#top-alert').find('button').click();
-                            $(that).removeClass('disabled').prop('disabled',false);
-                        },1500);
+        	                $('#top-alert').find('button').click();
+        	                $(that).removeClass('disabled').prop('disabled',false);
+        	            },1500);
                     }
                 },
                 "json"
@@ -127,9 +118,9 @@
                     $export.parent().children().removeClass("disabled");
                     $export.html("立即备份");
                     setTimeout(function(){
-                        $('#top-alert').find('button').click();
-                        $(that).removeClass('disabled').prop('disabled',false);
-                    },1500);
+    	                $('#top-alert').find('button').click();
+    	                $(that).removeClass('disabled').prop('disabled',false);
+    	            },1500);
                 }
             }, "json");
 

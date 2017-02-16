@@ -1,20 +1,24 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 
 namespace Admin\Controller;
 use User\Api\UserApi;
+
 /**
  * 后台首页控制器
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 class PublicController extends \Think\Controller {
 
     /**
      * 后台用户登录
-     * @author Jroy
+     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
     public function login($username = null, $password = null, $verify = null){
         if(IS_POST){
@@ -22,9 +26,11 @@ class PublicController extends \Think\Controller {
             if(!check_verify($verify)){
                 $this->error('验证码输入错误！');
             }
-            $User = new UserApi();
+
+            /* 调用UC登录接口登录 */
+            $User = new UserApi;
             $uid = $User->login($username, $password);
-            if(0 < $uid){ //UC登录成功*/
+            if(0 < $uid){ //UC登录成功
                 /* 登录用户 */
                 $Member = D('Member');
                 if($Member->login($uid)){ //登录用户
@@ -47,9 +53,9 @@ class PublicController extends \Think\Controller {
                 $this->redirect('Index/index');
             }else{
                 /* 读取数据库中的配置 */
-                $config =   S('DB_CONFIG_DATA');
+                $config	=	S('DB_CONFIG_DATA');
                 if(!$config){
-                    $config =   D('Config')->lists();
+                    $config	=	D('Config')->lists();
                     S('DB_CONFIG_DATA',$config);
                 }
                 C($config); //添加配置
@@ -71,12 +77,8 @@ class PublicController extends \Think\Controller {
     }
 
     public function verify(){
-        $config = array(
-            'length' => 4,
-            'imageW' => 238, 
-        );
-        ob_end_clean();
-        $verify = new \Think\Verify($config);
+        $verify = new \Think\Verify();
         $verify->entry(1);
     }
+
 }

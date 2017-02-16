@@ -1,5 +1,8 @@
 <?php
-
+// +----------------------------------------------------------------------
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Author: yangweijie <yangweijiester@gmail.com> <code-tech.diandian.com>
 // +----------------------------------------------------------------------
@@ -39,7 +42,7 @@ use Common\Controller\Addon;
             if(extension_loaded('curl')){
                 $url = 'http://www.onethink.cn/index.php?m=home&c=check_version';
                 $params = array(
-                    'version' => ZCMS_VERSION,
+                    'version' => ONETHINK_VERSION,
                     'domain'  => $_SERVER['HTTP_HOST'],
                     'auth'    => sha1(C('DATA_AUTH_KEY')),
                 );

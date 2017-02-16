@@ -4,7 +4,7 @@
 // +----------------------------------------------------------------------
 // | Copyright (c) 2006-2013 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
-// | Author: 麦当苗儿 <zuojiazi.cn@gmail.com> 
+// | Author: 麦当苗儿 <zuojiazi.cn@gmail.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 namespace OT\TagLib;
 use Think\Template\TagLib;
@@ -29,7 +29,7 @@ class Think extends TagLib{
         $field  = empty($tag['field']) ? 'true' : $tag['field'];
         $tree   =   empty($tag['tree'])? false : true;
         $parse  = $parse   = '<?php ';
-        $parse .= '$__NAV__ = M(\'Category\')->field('.$field.')->where("status=1")->order("sort")->select();';
+        $parse .= '$__NAV__ = M(\'Channel\')->field('.$field.')->where("status=1")->order("sort")->select();';
         if($tree){
             $parse .= '$__NAV__ = list_to_tree($__NAV__, "id", "pid", "_");';
         }

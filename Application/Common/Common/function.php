@@ -1,12 +1,15 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 
 // OneThink常量定义
-const ZCMS_VERSION    = '1.0.131218';
-const ZCMS_ADDON_PATH = './Addons/';
+const ONETHINK_VERSION    = '1.0.131218';
+const ONETHINK_ADDON_PATH = './Addons/';
 
 /**
  * 系统公共库文件
@@ -16,7 +19,7 @@ const ZCMS_ADDON_PATH = './Addons/';
 /**
  * 检测用户是否登录
  * @return integer 0-未登录，大于0-当前登录用户ID
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 function is_login(){
     $user = session('user_auth');
@@ -30,7 +33,7 @@ function is_login(){
 /**
  * 检测当前用户是否为管理员
  * @return boolean true-管理员，false-非管理员
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 function is_administrator($uid = null){
     $uid = is_null($uid) ? is_login() : $uid;
@@ -42,7 +45,7 @@ function is_administrator($uid = null){
  * @param  string $str  要分割的字符串
  * @param  string $glue 分割符
  * @return array
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 function str2arr($str, $glue = ','){
     return explode($glue, $str);
@@ -53,7 +56,7 @@ function str2arr($str, $glue = ','){
  * @param  array  $arr  要连接的数组
  * @param  string $glue 分割符
  * @return string
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 function arr2str($arr, $glue = ','){
     return implode($glue, $arr);
@@ -95,7 +98,7 @@ function msubstr($str, $start=0, $length, $charset="utf-8", $suffix=true) {
  * @param string $key  加密密钥
  * @param int $expire  过期时间 单位 秒
  * @return string
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 function think_encrypt($data, $key = '', $expire = 0) {
     $key  = md5(empty($key) ? C('DATA_AUTH_KEY') : $key);
@@ -124,7 +127,7 @@ function think_encrypt($data, $key = '', $expire = 0) {
  * @param  string $data 要解密的字符串 （必须是think_encrypt方法加密的字符串）
  * @param  string $key  加密密钥
  * @return string
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 function think_decrypt($data, $key = ''){
     $key    = md5(empty($key) ? C('DATA_AUTH_KEY') : $key);
@@ -165,7 +168,7 @@ function think_decrypt($data, $key = ''){
  * 数据签名认证
  * @param  array  $data 被认证的数据
  * @return string       签名
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 function data_auth_sign($data) {
     //数据类型检测
@@ -216,7 +219,7 @@ function list_sort_by($list,$field, $sortby='asc') {
  * @param string $pid parent标记字段
  * @param string $level level标记字段
  * @return array
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 function list_to_tree($list, $pk='id', $pid = 'pid', $child = '_child', $root = 0) {
     // 创建Tree
@@ -273,7 +276,7 @@ function tree_to_list($tree, $child = '_child', $order='id', &$list = array()){
  * @param  number $size      字节数
  * @param  string $delimiter 数字和单位分隔符
  * @return string            格式化后的带单位的大小
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 function format_bytes($size, $delimiter = '') {
     $units = array('B', 'KB', 'MB', 'GB', 'TB', 'PB');
@@ -284,7 +287,7 @@ function format_bytes($size, $delimiter = '') {
 /**
  * 设置跳转页面URL
  * 使用函数再次封装，方便以后选择不同的存储方式（目前使用cookie存储）
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 function set_redirect_url($url){
     cookie('redirect_url', $url);
@@ -293,7 +296,7 @@ function set_redirect_url($url){
 /**
  * 获取跳转页面URL
  * @return string 跳转页URL
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 function get_redirect_url(){
     $url = cookie('redirect_url');
@@ -337,7 +340,7 @@ function get_addon_config($name){
  * 插件显示内容里生成访问插件的url
  * @param string $url url
  * @param array $param 参数
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 function addons_url($url, $param = array()){
     $url        = parse_url($url);
@@ -360,7 +363,7 @@ function addons_url($url, $param = array()){
     );
     $params = array_merge($params, $param); //添加额外参数
 
-    return U('Admin/Addons/execute', $params);
+    return U('Addons/execute', $params);
 }
 
 /**
@@ -482,36 +485,7 @@ function get_category($id, $field = null){
     }
     return is_null($field) ? $list[$id] : $list[$id][$field];
 }
-/**
- * 获取产品分类信息并缓存分类
- * @param  integer $id    分类ID
- * @param  string  $field 要获取的字段名
- * @return string         分类信息
- */
-function get_shopcategory($id, $field = null){
-    static $list;
 
-    /* 非法分类ID */
-    if(empty($id) || !is_numeric($id)){
-        return '';
-    }
-
-    /* 读取缓存数据 */
-    if(empty($list)){
-        $list = S('sys_category_list');
-    }
-
-    /* 获取分类名称 */
-    if(!isset($list[$id])){
-        $cate = M('ShopCatalog')->find($id);
-        if(!$cate || 1 != $cate['status']){ //不存在分类，或分类被禁用
-            return '';
-        }
-        $list[$id] = $cate;
-        S('sys_category_list', $list); //更新缓存
-    }
-    return is_null($field) ? $list[$id] : $list[$id][$field];
-}
 /* 根据ID获取分类标识 */
 function get_category_name($id){
     return get_category($id, 'name');
@@ -528,7 +502,7 @@ function get_category_title($id){
  * @param  string  $field 模型字段
  * @return array
  */
-function get_model($id = null, $field = null){
+function get_document_model($id = null, $field = null){
     static $list;
 
     /* 非法分类ID */
@@ -543,7 +517,7 @@ function get_model($id = null, $field = null){
 
     /* 获取模型名称 */
     if(empty($list)){
-        $map   = array('status' => 1);
+        $map   = array('status' => 1, 'extend' => 1);
         $model = M('Model')->where($map)->field(true)->select();
         foreach ($model as $value) {
             $list[$value['id']] = $value;
@@ -565,7 +539,7 @@ function get_model($id = null, $field = null){
  * 解析UBB数据
  * @param string $data UBB字符串
  * @return string 解析为HTML的数据
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 function ubb($data){
     //TODO: 待完善，目前返回原始数据
@@ -975,143 +949,4 @@ function get_stemma($pids,Model &$model, $field='id'){
         $child_ids  = array_column((array)$result,'id');
     }
     return $collection;
-}
-/**
- * 获取参数的所有子级分类
- * @param int $cid 分类id
- * @return array 参数子类的信息集合
- * @author jroy <jroy@foxmail.com>
- */
-function get_child_category($cid){
-    if(empty($cid)){
-        return false;
-    }
-    $cates  =   M('menu')->where(array('hide'=>0,'pid'=>$cid))->field('id,title,pid,url,module')->order('sort asc,id asc')->select();
-    
-    return $cates;
-}
- // 分析枚举类型配置值 格式 a:名称1,b:名称2
-function parse_config_attr($string) {
-    $array = preg_split('/[,;\r\n]+/', trim($string, ",;\r\n"));
-    if(strpos($string,':')){
-        $value  =   array();
-        foreach ($array as $val) {
-            list($k, $v) = explode(':', $val);
-            $value[$k]   = $v;
-        }
-    }else{
-        $value  =   $array;
-    }
-    return $value;
-}
-/**
- * 获取当前分类的文档类型
- * @param int $id
- * @return array 文档类型数组
- * @author huajie <banhuajie@163.com>
- */
-function get_type_bycate($id = null){
-    if(empty($id)){
-        return false;
-    }
-    $type_list  =   C('DOCUMENT_MODEL_TYPE');
-    $model_type =   M('Category')->getFieldById($id, 'type');
-    $model_type =   explode(',', $model_type);
-    foreach ($type_list as $key=>$value){
-        if(!in_array($key, $model_type)){
-            unset($type_list[$key]);
-        }
-    }
-    return $type_list;
-}
-// 获取模型名称
-function get_model_by_id($id){
-    return $model = M('Model')->getFieldById($id,'title');
-}
- // 分析枚举类型字段值 格式 a:名称1,b:名称2
- // 暂时和 parse_config_attr功能相同
- // 但请不要互相使用，后期会调整
-function parse_field_attr($string) {
-    if(0 === strpos($string,':')){
-        // 采用函数定义
-        return   eval(substr($string,1).';');
-    }
-    $array = preg_split('/[,;\r\n]+/', trim($string, ",;\r\n"));
-    if(strpos($string,':')){
-        $value  =   array();
-        foreach ($array as $val) {
-            list($k, $v) = explode(':', $val);
-            $value[$k]   = $v;
-        }
-    }else{
-        $value  =   $array;
-    }
-    return $value;
-}
-//获取产品图片
-function get_product_image($id){
-    $img = M('picture')->find($id);
-    return $img['path'];
-}
-function get_format_price($num){
-    if(!is_numeric($num)){
-        return false;
-    }
-    $rvalue='';
-    $num = explode('.',$num);//把整数和小数分开
-    $rl = !isset($num['1']) ? '00' : $num['1'];//小数部分的值
-    $j = strlen($num[0]) % 3;//整数有多少位
-    $sl = substr($num[0], 0, $j);//前面不满三位的数取出来
-    $sr = substr($num[0], $j);//后面的满三位的数取出来
-    $i = 0;
-    while($i <= strlen($sr)){
-        $rvalue = $rvalue.','.substr($sr, $i, 3);//三位三位取出再合并，按逗号隔开
-        $i = $i + 3;
-    }
-    $rvalue = $sl.$rvalue;
-    $rvalue = substr($rvalue,0,strlen($rvalue)-1);//去掉最后一个逗号
-    $rvalue = explode(',',$rvalue);//分解成数组
-    if($rvalue[0]==0){
-        array_shift($rvalue);//如果第一个元素为0，删除第一个元素
-    }
-    $rv = $rvalue[0];//前面不满三位的数
-    for($i = 1; $i < count($rvalue); $i++){
-        $rv = $rv.','.$rvalue[$i];
-    }
-    if(!empty($rl)){
-        $rvalue = $rv.'.'.$rl;//小数不为空，整数和小数合并
-    }else{
-        $rvalue = $rv;//小数为空，只有整数
-    }
-    return $rvalue;
-}
-function get_order_status($key)
-{
-    $order_status = array(
-        '0' => '交易完成',
-        '1' => '未支付',
-        '2' => '已支付',
-        '3' => '已发货',
-        '4' => '已取消',
-        '5' => '已过期',
-    );
-    return $order_status[$key];
-}
-/*获取栏目url*/
-function get_cate_url($cid){
-    $cate = M('category')->where('id='.$cid)->find();
-    if(!$cate['url']){
-        switch ($cate['type']) {
-            case '2': //单页
-                $url = U('Home/Article/page',array('cid'=>$cate['id']));
-                break;
-            case '3': //内部链接
-                $url = U($cate['url']);
-                break;
-            default:
-                $url = U('Home/Article/lists',array('cid'=>$cate['id']));
-                break;
-        }
-    }
-    return $url;
 }

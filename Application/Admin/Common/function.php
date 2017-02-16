@@ -1,7 +1,10 @@
 <?php
-
 // +----------------------------------------------------------------------
-// | Author: Jroy 
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 
 /**
@@ -56,7 +59,10 @@ function get_list_field($data, $grid,$model){
     return $value;
 }
 
-
+// 获取模型名称
+function get_model_by_id($id){
+    return $model = M('Model')->getFieldById($id,'title');
+}
 
 // 获取属性类型信息
 function get_attribute_type($type=''){
@@ -73,8 +79,6 @@ function get_attribute_type($type=''){
     	'editor'    =>  array('编辑器','text NOT NULL'),
     	'picture'   =>  array('上传图片','int(10) UNSIGNED NOT NULL'),
     	'file'    	=>  array('上传附件','int(10) UNSIGNED NOT NULL'),
-        'gallery'   =>  array('多图上传','varchar(100) NOT NULL'),
-        'array'  =>  array('相关','varchar(225) NOT NULL'),
     );
     return $type?$_type[$type][0]:$_type;
 }
@@ -91,8 +95,8 @@ function get_status_title($status = null){
     }
     switch ($status){
         case -1 : return    '已删除';   break;
-        case 0  : return    '<font color=red>禁用</font>';     break;
-        case 1  : return    '<font color=green>正常</font>';     break;
+        case 0  : return    '禁用';     break;
+        case 1  : return    '正常';     break;
         case 2  : return    '待审核';   break;
         default : return    false;      break;
     }
@@ -108,6 +112,23 @@ function show_status_op($status) {
     }
 }
 
+/**
+ * 获取文档的类型文字
+ * @param string $type
+ * @return string 状态文字 ，false 未获取到
+ * @author huajie <banhuajie@163.com>
+ */
+function get_document_type($type = null){
+    if(!isset($type)){
+        return false;
+    }
+    switch ($type){
+        case 1  : return    '目录'; break;
+        case 2  : return    '主题'; break;
+        case 3  : return    '段落'; break;
+        default : return    false;  break;
+    }
+}
 
 /**
  * 获取配置的类型
@@ -175,8 +196,6 @@ function extra_menu($extra_menu,&$base_menu){
     }
 }
 
-
-
 /**
  * 获取参数的所有父级分类
  * @param int $cid 分类id
@@ -210,14 +229,33 @@ function get_parent_category($cid){
  * 检测验证码
  * @param  integer $id 验证码ID
  * @return boolean     检测结果
- * @author Jroy
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 function check_verify($code, $id = 1){
     $verify = new \Think\Verify();
     return $verify->check($code, $id);
 }
 
-
+/**
+ * 获取当前分类的文档类型
+ * @param int $id
+ * @return array 文档类型数组
+ * @author huajie <banhuajie@163.com>
+ */
+function get_type_bycate($id = null){
+    if(empty($id)){
+        return false;
+    }
+    $type_list  =   C('DOCUMENT_MODEL_TYPE');
+    $model_type =   M('Category')->getFieldById($id, 'type');
+    $model_type =   explode(',', $model_type);
+    foreach ($type_list as $key=>$value){
+        if(!in_array($key, $model_type)){
+            unset($type_list[$key]);
+        }
+    }
+    return $type_list;
+}
 
 /**
  * 获取当前文档的分类
@@ -233,11 +271,47 @@ function get_cate($cate_id = null){
     return $cate;
 }
 
-
+ // 分析枚举类型配置值 格式 a:名称1,b:名称2
+function parse_config_attr($string) {
+    $array = preg_split('/[,;\r\n]+/', trim($string, ",;\r\n"));
+    if(strpos($string,':')){
+        $value  =   array();
+        foreach ($array as $val) {
+            list($k, $v) = explode(':', $val);
+            $value[$k]   = $v;
+        }
+    }else{
+        $value  =   $array;
+    }
+    return $value;
+}
 
 // 获取子文档数目
 function get_subdocument_count($id=0){
     return  M('Document')->where('pid='.$id)->count();
+}
+
+
+
+ // 分析枚举类型字段值 格式 a:名称1,b:名称2
+ // 暂时和 parse_config_attr功能相同
+ // 但请不要互相使用，后期会调整
+function parse_field_attr($string) {
+    if(0 === strpos($string,':')){
+        // 采用函数定义
+        return   eval(substr($string,1).';');
+    }
+    $array = preg_split('/[,;\r\n]+/', trim($string, ",;\r\n"));
+    if(strpos($string,':')){
+        $value  =   array();
+        foreach ($array as $val) {
+            list($k, $v) = explode(':', $val);
+            $value[$k]   = $v;
+        }
+    }else{
+        $value  =   $array;
+    }
+    return $value;
 }
 
 /**
@@ -296,152 +370,4 @@ function get_action_type($type, $all = false){
 		return $list;
 	}
 	return $list[$type];
-}
-/**
- * 清空缓存
- */
-function sp_clear_cache(){
-    import ( "Org.Util.Dir" );
-    $dirs = array ();
-    // runtime/
-    $rootdirs = scandir ( RUNTIME_PATH );
-    //$noneed_clear=array(".","..","Data");
-    $noneed_clear=array(".","..");
-    $rootdirs=array_diff($rootdirs, $noneed_clear);
-    foreach ( $rootdirs as $dir ) {
-        if ($dir != "." && $dir != "..") {
-            $dir = RUNTIME_PATH . $dir;
-            if (is_dir ( $dir )) {
-                array_push ( $dirs, $dir );
-                $tmprootdirs = scandir ( $dir );
-                foreach ( $tmprootdirs as $tdir ) {
-                    if ($tdir != "." && $tdir != "..") {
-                        $tdir = $dir . '/' . $tdir;
-                        if (is_dir ( $tdir )) {
-                            array_push ( $dirs, $tdir );
-                        }
-                    }
-                }
-            }else{
-                @unlink($dir);
-            }
-        }
-    }
-    $dirtool=new \Org\Util\Dir;
-    foreach ( $dirs as $dir ) {
-        $dirtool->del ( $dir );
-    }
-    return true;
-}
-/**
- * 获取文档模型信息
- * @param  integer $id    模型ID
- * @param  string  $field 模型字段
- * @return array
- */
-function get_document_model($id = null, $field = null){
-    static $list;
-
-    /* 非法分类ID */
-    if(!(is_numeric($id) || is_null($id))){
-        return '';
-    }
-
-    /* 读取缓存数据 */
-    if(empty($list)){
-        $list = S('DOCUMENT_MODEL_LIST');
-    }
-
-    /* 获取模型名称 */
-    if(empty($list)){
-        $map   = array('status' => 1,'id'=>array('gt','1'));
-        $model = M('Model')->where($map)->field(true)->select();
-        foreach ($model as $value) {
-            $list[$value['id']] = $value;
-        }
-        S('DOCUMENT_MODEL_LIST', $list); //更新缓存
-    }
-
-    /* 根据条件返回数据 */
-    if(is_null($id)){
-        return $list;
-    } elseif(is_null($field)){
-        return $list[$id];
-    } else {
-        return $list[$id][$field];
-    }
-}
-
-//获取友情链接分组title
-function get_flink_group($id){
-    $info = M('flink_group')->find($id);
-    return $info['title'];
-}
-
-function get_config($name)
-{   
-    $map['name'] = $name;
-    $res = M('config')->field('id,name,value')->where($map)->find();
-    return $res['value'];
-}
-/**
- * 获取首页的模板
- * param string $tpl 栏目分类：category/list/show
- * @return array
- */
-function get_template($template = 'category'){
-    $template_path=APP_PATH.C('HOME_TPL')."/Article/";
-    $files=scandir($template_path);
-    $tpl_files=array();
-    foreach ($files as $f){
-        if($f!="." || $f!=".."){
-            if(is_file($template_path.$f)){
-                $suffix=C("TMPL_TEMPLATE_SUFFIX");
-                $result=0;
-                $result=preg_match("/^$template/", $f);
-                if($result){
-                    $tpl=str_replace($suffix, "", $f);
-                    $tpl_files[$tpl]=$f;
-                }
-            }
-        }
-    }
-    return $tpl_files;
-}
-
-/**
- * 获取父栏目的模型
- * param int $pid
- * @return int
- */
-function get_parent_model($pid = 0){
-    $model = M('Category')->field('model')->where("id=$pid")->find();
-    return $model?$model['model']:0;
-}
-
-/**
- * 获取模型名称
- * param int $pid
- * @return int
- */
-function get_model_title($model_id = 1){
-    $model = M('Model')->field('title')->where("id=$model_id")->find();
-    return $model['title'];
-}
-/**
- * 获取文档的类型文字
- * @param string $type
- * @return string 状态文字 ，false 未获取到
- * @author huajie <banhuajie@163.com>
- */
-function get_document_type($type = null){
-    if(!isset($type)){
-        return false;
-    }
-    switch ($type){
-        case 1  : return    '目录'; break;
-        case 2  : return    '主题'; break;
-        case 3  : return    '段落'; break;
-        default : return    false;  break;
-    }
 }
